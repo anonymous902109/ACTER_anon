@@ -1,0 +1,2 @@
+,Fact id,Fact,Recourse,uncertainty,proximity,sparsity,recency,validity,Value
+0,0,"[2, 2, 2, 2, 3, 3, 3, 3, 3, 3]","[1, 7, 2, 3, 3, 3, 3, 10, 3, 4]",0.0,0.18,0.5,0.5454545454545454,False,1.2254545454545454

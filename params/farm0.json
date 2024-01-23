@@ -1,0 +1,13 @@
+{
+    "horizon": 10,
+    "xl": 0,
+    "xu": 10,
+    "n_gen": 10,
+    "pop_size": 100,
+    "expl_budget": 10,
+    "div_budget": 3,
+    "diversity_budget_list": [1],
+    "n_sim": 10,
+    "experience_path": "../datasets/farm0/experience.pkl"
+}
+
