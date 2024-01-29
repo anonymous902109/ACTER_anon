@@ -15,6 +15,6 @@ pip install -r requirements.txt
 At the moment, experiments can be run with simulated users.
 
 ```shell
-python main.py
+python scripts/main_diagnosing.py
 
 ```
