@@ -1,6 +1,7 @@
 import copy
 import math
-from datetime import datetime
+import numpy as np
+import torch
 
 from src.approaches.models.enc_dec import EncoderDecoder
 from src.optimization.objs.back_obj import BackObj
@@ -25,7 +26,7 @@ class BackObjDiscrete(BackObj):
 
     def action_proximity(self, fact, actions):
         fact_traj = self.combine(fact.states, fact.actions)
-        cf_traj = self.get_trajectory(fact)
+        cf_traj = self.get_trajectory(fact, actions)
 
         fact_enc = self.enc_dec.encode(fact_traj)
         cf_enc = self.enc_dec.encode(cf_traj)
@@ -39,35 +40,36 @@ class BackObjDiscrete(BackObj):
         comb = []
         for s in states:
             # all all states first
-            comb.append(list(s.squeeze()))
+            comb.extend(list(s.flatten()))
 
         for a in actions:
             # add all actions
             comb.append(a)
 
-        return comb
+        return torch.tensor(comb)
 
-    def get_trajectory(self, fact):
+    def get_trajectory(self, fact, actions):
         self.env.reset()
         self.env.set_stochastic_state(copy.copy(fact.states[0]), copy.deepcopy(fact.env_states[0]))
 
         t = []
-        t.append(list(fact.states[0].squeeze()))
+        t.extend(list(fact.states[0].flatten()))
         i = 0
-        for a in fact.actions:
+        for a in actions:
             obs, _, done, trunc, _ = self.env.step(a)
-            t.append(list(obs.squeeze()))
+            if (i != len(actions) - 1):
+                t.extend(list(obs.flatten())) # don't add the last state
             i += 1
             if done or trunc or self.env.check_failure():
                 break
 
-        if i < len(fact.actions):
+        if i < len(actions):
             # not all actions have been executed because of validity being broken
-            t.append(list(self.env.reset().squeeze())) # add a random state to fill up space
+            t.extend(list(self.env.reset().flatten()))  # add a random state to fill up space
 
-        for a in fact.actions:
+        for a in actions:
             t.append(a)
 
-        return a
+        return torch.tensor(t)
 
 

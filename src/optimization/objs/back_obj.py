@@ -23,7 +23,7 @@ class BackObj(AbstractObj):
         self.n_sim = params['n_sim']
 
     def get_objectives(self, fact, cf, actions, target_action):
-        proximity = self.action_proximity(fact.actions, actions)
+        proximity = self.action_proximity(fact, actions)
         sparsity = self.sparsity(fact, actions)
         recency = self.recency(fact, actions)
         stochasticity = self.stoch_validity(fact, actions)
@@ -85,7 +85,7 @@ class BackObj(AbstractObj):
     def action_proximity(self, fact, actions):
         dist = 0
         for i, a in enumerate(actions):
-            dist += self.env.action_distance(a, fact[i])
+            dist += self.env.action_distance(a, fact.actions[i])
 
         avg_distance = dist / (1.0*len(actions))
         return avg_distance

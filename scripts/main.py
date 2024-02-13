@@ -31,6 +31,7 @@ def main(task_name, agent_type):
     param_file = 'params/{}.json'.format(task_name)
     generator_path = 'trained_models/generator_{}_{}.ckpt'.format(task_name, agent_type)
 
+
     if task_name == 'gridworld':
         env = Gridworld()
         gym_env = env
