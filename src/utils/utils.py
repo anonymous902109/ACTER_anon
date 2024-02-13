@@ -113,7 +113,7 @@ def generate_paths_with_outcome(outcome, csv_path, env, bb_model, n_ep=20000, ho
                 if outcome.explain_outcome(env):
                     p.append((copy.copy(new_obs), None, None, None, copy.deepcopy(env.get_env_state()))) # add the last state -- failure state with None as action identifier
                     if (len(p) - 1) >= horizon: # have to subtract the last state because it doesn't have an action with it
-                        for t in p[-horizon:]:
+                        for t in p[-(horizon+1):]:
                             buffer.append(*t)
 
                         buffer.stop_current_episode()
