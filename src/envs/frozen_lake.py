@@ -1,6 +1,7 @@
 import random
+from datetime import datetime
 
-import gym
+import gymnasium as gym
 
 from src.envs.abs_env import AbstractEnv
 import numpy as np
@@ -39,7 +40,10 @@ class FrozenLake(AbstractEnv):
 
         self.max_penalty = min(list(self.REWARDS.values()))
 
+        self.random_generator = np.random.default_rng(seed=0)
+
     def step(self, action):
+        self.failure = False
         agent = self.state['agent']
         goal = self.state['goal']
         frozen = self.state['frozen']
@@ -51,7 +55,6 @@ class FrozenLake(AbstractEnv):
             if not move_prob:
                 random_action = np.random.choice([0, 1, 2, 3])
                 action = random_action
-                # return self.state_array(self.state), self.REWARDS['step'], self.steps >= self.max_steps, {}
 
         if agent in costly:
             rew = self.REWARDS['costly step']
@@ -78,13 +81,18 @@ class FrozenLake(AbstractEnv):
             else:
                 rew = self.REWARDS['wrong_goal']
 
-        done = done or (self.steps >= self.max_steps)
+        trunc = self.steps >= self.max_steps
+        done = done or trunc
 
         self.state['agent'] = agent
 
+        if agent in frozen:
+            # if agent ended up in frozen state let's consider that failure
+            self.failure = True
+
         self.steps += 1
 
-        return self.state_array(self.state), rew, done, {}
+        return self.state_array(self.state), rew, done, trunc, {}
 
     def close(self):
         pass
@@ -92,8 +100,10 @@ class FrozenLake(AbstractEnv):
     def render(self):
         self.render_state(self.state)
 
-    def reset(self):
+    def reset(self, seed=0):
+        random.seed(seed)
         self.steps = 0
+        self.failure = False
 
         agent = random.choice(self.AGENT_START_STATES)
         goal = random.choice(self.GOAL_STATES)
@@ -105,7 +115,7 @@ class FrozenLake(AbstractEnv):
             'costly': self.COSTLY_SQUARES
         }
 
-        return self.state_array(self.state)
+        return self.state_array(self.state), {}
 
     def render_state(self, x):
         ''' Renders single state x '''
@@ -148,16 +158,22 @@ class FrozenLake(AbstractEnv):
         ''' Returns a list of actions available in state x'''
         return list(self.ACTIONS.values())
 
-    def set_state(self, x):
+    def set_stochastic_state(self, state, env_state):
         ''' Changes the environment's current state to x '''
         self.state = {}
-        self.state['agent'] = x[0]
-        self.state['goal'] = x[1]
+        self.state['agent'] = state[0]
+        self.state['goal'] = state[1]
 
         self.state['frozen'] = self.FROZEN_SQUARES
         self.state['costly'] = self.COSTLY_SQUARES
 
         self.steps = 0
+
+        self.random_generator = env_state  # set random generator to the same values
+
+    def set_nonstoch_state(self, state, env_state):
+        self.set_stochastic_state(state)
+        self.random_generator.seed(int(datetime.now().timestamp())) # reset random generator
 
     def check_done(self, x):
         ''' Returns a boolean indicating if x is a terminal state in the environment'''
@@ -196,3 +212,9 @@ class FrozenLake(AbstractEnv):
             array_state.append(c)
 
         return np.array(array_state)
+
+    def check_failure(self):
+        return self.failure
+
+    def get_env_state(self):
+        return self.random_generator

@@ -23,6 +23,6 @@ class BackGenDiscrete(AbstractBaseline):
         cfs = []
 
         for cf in res:
-            cfs.append(fact, CF(cf[0], None, cf[2], cf[1]))
+            cfs.append(fact, CF(fact, cf[0], None, cf[2], cf[1]))
 
         return cfs

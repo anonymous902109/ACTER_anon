@@ -18,7 +18,7 @@ from src.evaluation.eval_diagnostic import generate_counterfactuals, evaluate_cf
     evaluate_coverage
 from src.models.dqn_model import DQNModel
 from src.utils.user_study_util import choose_user_study_traj, choose_random_subset
-from src.utils.utils import seed_everything, generate_unsuccessful_paths
+from src.utils.utils import seed_everything, generate_paths_with_outcome
 
 
 def main(task_name):
@@ -51,7 +51,7 @@ def main(task_name):
     bb_model = DQNModel(env, model_path, training_timesteps)
 
     # extract trajectories that end in failure
-    failure_trajectories = generate_unsuccessful_paths(failure_traj_path, env, bb_model, horizon=params['horizon'])
+    failure_trajectories = generate_paths_with_outcome(failure_traj_path, env, bb_model, horizon=params['horizon'])
 
     # define algorithms
     backgen = BackGen(env, bb_model, params)  # our approach

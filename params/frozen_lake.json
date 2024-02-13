@@ -1,10 +1,17 @@
 {
+    "horizon": 5,
+    "xl": 0,
+    "xu": 4,
+    "n_gen": 10,
+    "pop_size": 100,
+    "expl_budget": 10,
     "layer_shapes": [[12, 128], [128, 7]],
     "ts_n_iter": 300,
     "ts_n_expand": 5,
     "n_sim": 10,
     "max_actions": 20,
     "max_level": 20,
-    "c": 0.7
+    "c": 0.7,
+    "task_name": "frozen_lake"
 }
 

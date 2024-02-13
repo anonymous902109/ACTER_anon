@@ -68,7 +68,7 @@ def load_facts_from_json(fact_file):
     return facts, targets
 
 
-def generate_unsuccessful_paths(csv_path, env, bb_model, n_ep=20000, horizon=5):
+def generate_paths_with_outcome(outcome, csv_path, env, bb_model, n_ep=20000, horizon=5):
     ''' Generates a dataset of Trajectory objects where a failure happens
     :param csv_path: path to save the dataset
     :param env: gym gym_env
@@ -87,7 +87,10 @@ def generate_unsuccessful_paths(csv_path, env, bb_model, n_ep=20000, horizon=5):
         for e_id, e in enumerate(episodes):
             t = Trajectory(id=e_id)
             for i in e:
-                t.append(i['state'], i['action'], i['next_action'])
+                if i['action'] is not None:
+                    t.append(i['state'], i['action'], i['next_action'])
+                else:
+                    t.set_end_state(i['state'])
 
             if len(t.actions) >= horizon:
                 trajs.append(t)
@@ -107,12 +110,14 @@ def generate_unsuccessful_paths(csv_path, env, bb_model, n_ep=20000, horizon=5):
                 new_obs, rew, done, trunc, info = env.step(action)
                 done = done or trunc
 
-                if env.check_failure():
-                    if len(p) >= horizon:
+                if outcome.explain_outcome(env):
+                    p.append((copy.copy(new_obs), None, None, None, copy.deepcopy(env.get_env_state()))) # add the last state -- failure state with None as action identifier
+                    if (len(p) - 1) >= horizon: # have to subtract the last state because it doesn't have an action with it
                         for t in p[-horizon:]:
                             buffer.append(*t)
+
                         buffer.stop_current_episode()
-                    done = True   # end episode after failure to prevent first failure
+                    # done = True   # end episode after failure to prevent first failure
 
                 obs = new_obs
 
@@ -123,9 +128,12 @@ def generate_unsuccessful_paths(csv_path, env, bb_model, n_ep=20000, horizon=5):
         # transform into traj class
         trajs = []
         for e_id, e in enumerate(episodes):
-            t = Trajectory(e_id)
+            t = Trajectory(e_id, outcome)
             for i in e:
-                t.append(i['state'], i['action'], i['next_action'])
+                if i['action'] is not None: # it's not the last state -- failure state then add
+                    t.append(i['state'], i['action'], i['next_action'])
+                else:
+                    t.set_end_state(i['state'])
 
             if len(t.actions) >= horizon:
                 trajs.append(t)

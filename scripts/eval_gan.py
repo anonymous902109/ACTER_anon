@@ -4,7 +4,7 @@ from src.approaches.baselines.cf.ganterfactual import GANterfactual
 from src.envs.highway_env import HighwayEnv
 from src.models.dqn_model import DQNModel
 from src.utils.user_study_util import choose_user_study_traj
-from src.utils.utils import generate_unsuccessful_paths
+from src.utils.utils import generate_paths_with_outcome
 import matplotlib.pyplot as plt
 
 
@@ -27,7 +27,7 @@ def main(task_name):
     bb_model = DQNModel(env, model_path, training_timesteps)
 
     # extract trajectories that end in failure
-    failure_trajectories = generate_unsuccessful_paths(failure_traj_path, env, bb_model)
+    failure_trajectories = generate_paths_with_outcome(failure_traj_path, env, bb_model)
 
     # extract trajectories where failure can be prevented by changing only one action
     fail_success_pair = choose_user_study_traj(failure_trajectories, env,

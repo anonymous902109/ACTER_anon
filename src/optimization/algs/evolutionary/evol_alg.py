@@ -40,10 +40,6 @@ class EvolutionaryAlg:
         init_population += np.random.randint(-1, 2, size=(self.pop_size, self.horizon))
         init_population = np.mod(init_population, self.xu + 1)
         init_population = np.array(init_population)
-        #
-        # init_population = np.random.randint(self.xl, self.xu, size=(self.pop_size, self.horizon))
-        # init_population = np.mod(init_population, self.xu + 1)
-        # init_population = np.array(init_population)
 
         algorithm = NSGA2(pop_size=self.pop_size,
                           crossover=SBX(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),

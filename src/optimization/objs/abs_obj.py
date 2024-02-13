@@ -112,7 +112,7 @@ class AbstractObj():
 
             if not early_break:
                 # count how many different actions are chosen after the path
-                outcome = self.bb_model.predict(obs)
+                outcome = self.bb_model.predict(obs)  # TODO: change this to generic outcome
                 if outcome in list(diff_outcomes.keys()):
                     diff_outcomes[outcome] += 1
                 else:

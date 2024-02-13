@@ -21,6 +21,8 @@ class AbstractEnv(gym.Env):
 
         self.max_penalty = -3
 
+        self.failure = False
+
     def step(self, action):
         return None
 
@@ -49,8 +51,11 @@ class AbstractEnv(gym.Env):
         ''' Returns a list of actions available in state x'''
         return []
 
-    def set_state(self, x):
+    def set_stochastic_state(self, state, env_state):
         ''' Changes the environment's current state to x '''
+        pass
+
+    def set_nonstoch_state(self, state, env_state):
         pass
 
     def check_done(self, x):
@@ -64,3 +69,6 @@ class AbstractEnv(gym.Env):
     def writable_state(self, x):
         ''' Returns a string with all state information to be used for writing results'''
         return None
+
+    def check_failure(self):
+        return self.failure
