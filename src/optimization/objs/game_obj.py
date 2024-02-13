@@ -2,6 +2,9 @@ from src.optimization.objs.abs_obj import AbstractObj
 
 
 class GameObj(AbstractObj):
+    '''
+    Set of RL game-specific objectives for generating useful counterfactuals
+    '''
 
     def __init__(self, env, bb_model, params):
         self.bb_model = bb_model

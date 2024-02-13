@@ -3,6 +3,7 @@ from datetime import datetime
 import itertools
 import json
 
+from src.approaches.models.enc_dec import EncoderDecoder
 from src.envs.abs_env import AbstractEnv
 import numpy as np
 from farm_games_local.farmgym_games.game_catalogue.farm0.farm import env as env_maker
@@ -25,6 +26,7 @@ class Farm0(AbstractEnv):
         self.action_space_low = 0
         self.action_space_high = 10
 
+
     def step(self, action):
         action = self.decode_action(action)
         try:
@@ -40,9 +42,6 @@ class Farm0(AbstractEnv):
         if stage == 'dead' or stage == 'none':
             self.failure = True
             done = True
-
-        # if rew > 0:
-        #     print('Stage = {} Fruit weight = {}'.format(stage, self.gym_env.fields['Field-0'].entities['Plant-0'].variables['fruit_weight#g'].item().value))
 
         self.state = np.array(flat_obs)
 
@@ -150,6 +149,7 @@ class Farm0(AbstractEnv):
         return (self.gym_env.np_random, self.gym_env.fields['Field-0'].entities)
 
     def action_distance(self, a, b):
+        '''Calculates distance between 2 actions in the environment '''
         if a != 10 and b != 10:  # both actions are not harvest
             return abs(a - b) / 10
         else:

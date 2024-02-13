@@ -8,6 +8,7 @@
     "div_budget": 3,
     "diversity_budget_list": [1],
     "n_sim": 10,
-    "experience_path": "../datasets/farm0/experience.pkl"
+    "experience_path": "../datasets/farm0/experience.pkl",
+    "task_name": "farm0"
 }
 

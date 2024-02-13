@@ -3,6 +3,7 @@ import json
 import sys
 
 from src.approaches.backward_cfs.backward_generator import BackGen
+from src.approaches.backward_cfs.backwards_generator_discrete import BackGenDiscrete
 from src.approaches.baselines.no_div.no_div_cf_gen import NoDivSOCFGen
 from src.approaches.baselines.no_div.no_div_random_gen import NoDivRANDCFGen
 from src.approaches.baselines.state_importance.highlights_cf import HIGHLIGHTS
@@ -26,7 +27,7 @@ def main(task_name):
 
     # define paths
     param_file = '../params/{}.json'.format(task_name)
-    model_path = '../trained_models/{}'.format(task_name)
+    model_path = '../trained_models/{}/{}'.format(task_name, task_name)
     failure_traj_path = '../datasets/{}/failures'.format(task_name)
     one_step_traj_path = '../datasets/{}/fail_success_pairs.pkl'.format(task_name)
     eval_path = f'../eval/{task_name}/'
@@ -54,6 +55,7 @@ def main(task_name):
 
     # define algorithms
     backgen = BackGen(env, bb_model, params)  # our approach
+    backgen_discrete = BackGenDiscrete(env, bb_model, params)
 
     # state importance approaches
     state_importance_methods = []
@@ -75,13 +77,8 @@ def main(task_name):
 
         diversity_methods += [no_div_so_backgen, no_div_rand_backgen]
 
-    # methods = [backgen] + state_importance_methods
-    #
-    # method_names = ['MOO_CF', 'HIGHLIGHTS', 'InterestCERTAIN', 'InterestUNCERTAIN', 'InterestLOCAL_MIN',
-    #                 'InterestLOCAL_MAX', ]
-
-    methods = diversity_methods
-    method_names = ['NO_DIV_SO']
+    methods = [backgen_discrete ]
+    method_names = ['ACTER_discrete']
 
     # # generate counterfactuals
     generate_counterfactuals(methods, method_names, failure_trajectories, env, eval_path, params)

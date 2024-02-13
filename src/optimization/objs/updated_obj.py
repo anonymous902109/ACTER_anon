@@ -2,6 +2,9 @@ from src.optimization.objs.abs_obj import AbstractObj
 
 
 class UpdatedObj(AbstractObj):
+    '''
+    Set of objectives used to evaluate a diverse RACCER approach which uses multi-objective optimization
+    '''
 
     def __init__(self, env, bb_model, params, max_actions):
         super(UpdatedObj, self).__init__(env, bb_model, params, max_actions)

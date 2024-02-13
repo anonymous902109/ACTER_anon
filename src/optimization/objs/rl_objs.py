@@ -2,7 +2,9 @@ from src.optimization.objs.abs_obj import AbstractObj
 
 
 class RLObjs(AbstractObj):
-
+    '''
+    Set of objectives used in the first version of RACCER, likely obsolete now
+    '''
     def __init__(self, env, bb_model, params, max_actions):
         self.objectives = ['cost', 'reachability', 'sparsity']
         super(RLObjs, self).__init__(env, bb_model, params, max_actions)

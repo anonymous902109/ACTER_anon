@@ -4,8 +4,8 @@ import pandas as pd
 import numpy as np
 
 
-
 def evaluate_all(tasks, agent_types, method_names, eval_objs):
+    ''' Evaluate all methods on all agent types with given evaluation objectives'''
     for t in tasks:
         for a in agent_types:
             for m in method_names:
@@ -18,6 +18,7 @@ def evaluate_all(tasks, agent_types, method_names, eval_objs):
 
                 except FileNotFoundError:
                     continue
+
 
 def evaluate_objectives(df, eval_objs, method_name=''):
     eval_obj_names = []
@@ -34,7 +35,8 @@ def evaluate_objectives(df, eval_objs, method_name=''):
 
     print('Method = {}. Average values for objectives = {}'.format(method_name, res))
 
-def get_realistic_df(eval_paths, targets=None, p=0.5):
+
+def get_realistic_df(eval_paths, targets=None):
     filtered_facts = []
     for ep in eval_paths:
         df = pd.read_csv(ep, header=0)
@@ -55,6 +57,7 @@ def get_realistic_df(eval_paths, targets=None, p=0.5):
 
     return filter_df
 
+
 def split_df(df, p=0.5):
     unique_facts = list(df.fact_id.unique())
     sample_facts = random.sample(unique_facts, int(p*len(unique_facts)))
@@ -67,8 +70,8 @@ def split_df(df, p=0.5):
 
     return (train_df_facts, test_df_facts)
 
-def print_summary_split(df, train_df_facts, test_df_facts, eval_paths, targets):
 
+def print_summary_split(df, train_df_facts, test_df_facts, eval_paths, targets):
     print('--------- USER STUDY TRAINING DATASET ------------')
     for fact_id in train_df_facts:
         print('FACT #{}:'.format(fact_id))

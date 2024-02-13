@@ -2,6 +2,9 @@ from src.optimization.objs.abs_obj import AbstractObj
 
 
 class FidObj(AbstractObj):
+    '''
+    Set of objectives used by the RACCER algorithm for generating prefactuals
+    '''
 
     def __init__(self, env, bb_model, params):
         self.bb_model = bb_model

@@ -7,6 +7,10 @@ from src.optimization.objs.abs_obj import AbstractObj
 
 
 class BackObj(AbstractObj):
+    '''
+    A set of objectives and constraints used for generating backward counterfactuals in ACTER algorithm
+    The action proximity is defined for discrete actions
+    '''
 
     def __init__(self, env, bb_model, params):
 
@@ -84,8 +88,6 @@ class BackObj(AbstractObj):
             dist += self.env.action_distance(a, fact[i])
 
         avg_distance = dist / (1.0*len(actions))
-
-
         return avg_distance
 
     def bool_dist(self, x, y):

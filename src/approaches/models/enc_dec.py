@@ -1,18 +1,25 @@
+from datetime import datetime
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
 
+from src.models.torch_ds import TorchTrajectoryDataset
+
 
 class EncoderDecoder:
 
-    def __init__(self):
+    def __init__(self, env, bb_model, path, k=10):
         self.enc = Encoder()
         self.dec = Decoder()
 
-    def train(self, dataset):
+        self.ds = TorchTrajectoryDataset(env, bb_model, path + 'dataset_enc_dec.csv', k)
+        self.train(path)
+
+    def train(self, save_path):
         try:
-            self.load('trained_models/gridworld')
+            self.load(save_path)
             self.enc.eval()
             self.dec.eval()
             return
@@ -20,6 +27,7 @@ class EncoderDecoder:
             self.loss = nn.MSELoss()
             self.optim = optim.Adam(list(self.enc.parameters()) + list(self.dec.parameters()), lr=0.0001)
 
+            dataset = self.ds
             train_size = int(0.8 * len(dataset))
             test_size = len(dataset) - train_size
 
@@ -28,22 +36,22 @@ class EncoderDecoder:
             train_loader = DataLoader(train_data, batch_size=256, shuffle=True)
             test_loader = DataLoader(test_data, batch_size=256, shuffle=True)
 
-            n_ep = 10000
+            n_ep = 100
             for i in range(n_ep):
                 for x, y in train_loader:
                     self.enc.train()
                     self.dec.train()
 
-                    enc = self.enc(x)
-                    dec = self.dec(enc)
+                    enc = self.enc.float()(x.float())
+                    dec = self.dec.float()(enc.float())
 
-                    loss = self.loss(dec, y)
+                    loss = self.loss(dec, y.float())
 
                     self.optim.zero_grad()
                     loss.backward()
                     self.optim.step()
 
-                if i % 100 == 0:
+                if i % 10 == 0:
                     # evaluation on test data
                     self.enc.eval()
                     self.dec.eval()
@@ -58,7 +66,7 @@ class EncoderDecoder:
                         total_loss += test_loss.item()
 
                     print('Epoch = {}, Test loss = {}'.format(i, total_loss / len(test_data)))
-                    self.save()
+                    self.save(save_path)
 
     def encode(self, x):
         self.enc.eval()
@@ -70,9 +78,9 @@ class EncoderDecoder:
         self.enc.eval()
         return self.dec.float()(x.float()).detach()
 
-    def save(self):
-        self.enc.save('gridworld_optim_enc.zip')
-        self.dec.save('gridworld_optim_dec.zip')
+    def save(self, path):
+        self.enc.save(path + '_enc.zip')
+        self.dec.save(path + '_dec.zip')
 
     def load(self, path):
         checkpoint_enc = torch.load(path + '_enc.zip')
@@ -84,23 +92,24 @@ class EncoderDecoder:
         self.enc.eval()
         self.dec.eval()
 
+
 class Encoder(nn.Module):
 
     def __init__(self):
         super(Encoder, self).__init__()
         layers = []
 
-        layers.append(nn.Linear(8, 128))
+        layers.append(nn.Linear(110, 128))  # TODO: remove hardcoding (horizon * state space) + horizon
         layers.append(nn.ReLU())
         layers.append(nn.Linear(128, 128))
         layers.append(nn.ReLU())
-        layers.append(nn.Linear(128, 5))
+        layers.append(nn.Linear(128, 32)) # TODO: add this as param
         layers.append(nn.Tanh())
 
         self.main = nn.Sequential(*layers)
 
     def forward(self, x):
-        return self.main(x)
+        return self.main.float()(x.float())
 
     def save(self, path):
         torch.save(self.state_dict(), path)
@@ -112,17 +121,17 @@ class Decoder(nn.Module):
         super(Decoder, self).__init__()
         layers = []
 
-        layers.append(nn.Linear(5, 128))
+        layers.append(nn.Linear(32, 128))
         layers.append(nn.ReLU())
         layers.append(nn.Linear(128, 128))
         layers.append(nn.ReLU())
-        layers.append(nn.Linear(128, 8))
+        layers.append(nn.Linear(128, 110))
         layers.append(nn.ReLU())
 
         self.main = nn.Sequential(*layers)
 
     def forward(self, x):
-        return self.main(x)
+        return self.main.float()(x.float())
 
     def save(self, path):
         torch.save(self.state_dict(), path)
