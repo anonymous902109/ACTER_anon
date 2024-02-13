@@ -1,6 +1,5 @@
 import copy
 import math
-import numpy as np
 import torch
 
 from src.approaches.models.enc_dec import EncoderDecoder
@@ -63,9 +62,10 @@ class BackObjDiscrete(BackObj):
             if done or trunc or self.env.check_failure():
                 break
 
-        if i < len(actions):
+        while i < (len(actions) - 1):
             # not all actions have been executed because of validity being broken
-            t.extend(list(self.env.reset().flatten()))  # add a random state to fill up space
+            t.extend(list(self.env.reset()[0].flatten()))  # add a random state to fill up space
+            i += 1
 
         for a in actions:
             t.append(a)

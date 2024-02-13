@@ -2,11 +2,6 @@ import json
 
 from src.approaches.backward_cfs.backward_generator import BackGen
 from src.approaches.backward_cfs.backwards_generator_discrete import BackGenDiscrete
-from src.approaches.baselines.state_importance.highlights_cf import HIGHLIGHTS
-from src.approaches.baselines.state_importance.interest_certain_gen import InterestCertainGen
-from src.approaches.baselines.state_importance.interest_local_max_gen import InterestLocalMaxGen
-from src.approaches.baselines.state_importance.interest_local_min_gen import InterestLocalMinGen
-from src.approaches.baselines.state_importance.interest_uncertain_gen import InterestUncertainGen
 from src.approaches.raccer.fid_raccer import FidRACCER
 from src.envs.farm0 import Farm0
 from src.envs.frozen_lake import FrozenLake
@@ -63,8 +58,8 @@ def main(task_name, agent_type):
     acter_discrete = BackGenDiscrete(env, bb_model, params)
     fid_raccer = FidRACCER(env, bb_model, params)
 
-    methods = [acter, fid_raccer]
-    method_names = ['acter', 'raccer']
+    methods = [acter_discrete, acter, fid_raccer]
+    method_names = ['ACTER_discrete', 'ACTER', 'raccer']
 
     generate_counterfactuals(methods, method_names, facts, env, eval_path, params)
 

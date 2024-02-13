@@ -25,7 +25,7 @@ class FidRACCER(AbstractBaseline):
         cfs = self.optim.alg.search(init_state=fact, fact=fact, target_action=target)
 
         if len(cfs):
-            cfs = [CF(cf[0], cf[1], cf[2], cf[3]) for cf in cfs]
+            cfs = [CF(fact, cf[0], cf[1], cf[2], cf[3]) for cf in cfs]
             cf_values = [cf.value for cf in cfs]
 
             best_value = max(cf_values)

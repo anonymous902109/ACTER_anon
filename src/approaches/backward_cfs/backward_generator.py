@@ -21,6 +21,6 @@ class BackGen(AbstractBaseline):
         cfs = []
 
         for cf in res:
-            cfs.append(CF(cf[0], None, cf[2], cf[1]))
+            cfs.append(CF(fact, cf[0], None, cf[2], cf[1]))
 
         return cfs

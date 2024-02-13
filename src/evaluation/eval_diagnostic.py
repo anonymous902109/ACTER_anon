@@ -3,21 +3,19 @@ import os
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
-from src.utils.user_study_util import render_traj
 
 
-def generate_counterfactuals(methods, method_names, trajectories, env, eval_path, params):
+def generate_counterfactuals(methods, method_names, facts, env, eval_path, params):
     ''' Generates counterfactual explanations for each passed failure trajectory using each model '''
-    print('Generating counterfactuals for {} facts'.format(len(trajectories)))
+    print('Generating counterfactuals for {} facts'.format(len(facts)))
     for i_m, m in enumerate(methods):
         record = []
         eval_path_results = os.path.join(eval_path, f'{method_names[i_m]}/results.csv')
         print('Method = {}'.format(method_names[i_m]))
-        for i, t in tqdm(enumerate(trajectories)):
-            if len(t.actions) == params['horizon']:
-                res = m.generate_counterfactuals(t)
-                for cf in res:
-                    record.append([i, list(t.actions), list(cf.recourse), *list(cf.reward_dict.values()), cf.value])
+        for i, t in tqdm(enumerate(facts)):
+            res = m.generate_counterfactuals(t)
+            for cf in res:
+                record.append([i, list(cf.fact), list(cf.recourse), *list(cf.reward_dict.values()), cf.value]) # TODO: add fact as value to CF class
 
             columns = ['Fact id', 'Fact', 'Recourse'] + m.obj.objectives + m.obj.constraints + ['Value']
             df = pd.DataFrame(record, columns=columns)
