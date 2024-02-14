@@ -35,9 +35,8 @@ class HeuristicTSAlgorithm:
                     c.rank_value = c.get_reward()
                     c.rewards = c.get_reward_dict()
 
-                    if self.bb_model.predict(c.state) == target_action:
-                        if self.env.realistic(c.state) and self.env.actionable(c.state, fact):
-                            self.cfs.append((c.prev_actions, c.state, c.rewards, c.rank_value))
+                    if c.valid_outcome:
+                        self.cfs.append((c.prev_actions, c.state, c.rewards, c.rank_value))
 
                 if len(new_nodes):
                     self.backpropagate(new_nodes[0].parent)

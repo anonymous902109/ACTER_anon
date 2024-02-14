@@ -85,7 +85,7 @@ def generate_paths_with_outcome(outcome, csv_path, env, bb_model, n_ep=20000, ho
         trajs = []
         episodes = [e for e in episodes if len(e) >= horizon]
         for e_id, e in enumerate(episodes):
-            t = Trajectory(id=e_id)
+            t = Trajectory(id=e_id, outcome=outcome)
             for i in e:
                 if i['action'] is not None:
                     t.append(i['state'], i['action'], i['next_action'])

@@ -26,6 +26,8 @@ class TreeNode:
 
         self.level = self.parent.level + 1 if self.parent is not None else 0
 
+        self.valid_outcome = self.fact.outcome.cf_outcome(self.env, bb_model, self.state, target_action)
+
     def available_actions(self):
         return self.env.get_actions(self.state)
 

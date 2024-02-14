@@ -172,8 +172,8 @@ class FrozenLake(AbstractEnv):
         self.random_generator = env_state  # set random generator to the same values
 
     def set_nonstoch_state(self, state, env_state):
-        self.set_stochastic_state(state)
-        self.random_generator.seed(int(datetime.now().timestamp())) # reset random generator
+        self.set_stochastic_state(state, env_state)
+        self.random_generator = np.random.default_rng(seed=int(datetime.now().timestamp()))  # reset random generator
 
     def check_done(self, x):
         ''' Returns a boolean indicating if x is a terminal state in the environment'''
@@ -218,3 +218,6 @@ class FrozenLake(AbstractEnv):
 
     def get_env_state(self):
         return self.random_generator
+
+    def action_distance(self, a, b):
+        return a != b

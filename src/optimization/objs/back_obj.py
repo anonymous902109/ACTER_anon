@@ -42,12 +42,12 @@ class BackObj(AbstractObj):
         self.env.reset()
         self.env.set_stochastic_state(copy.copy(fact.states[0]), copy.deepcopy(fact.env_states[0]))
         for a in actions:
-            _, _, done, trunc, _ = self.env.step(a)
+            obs, _, done, trunc, _ = self.env.step(a)
             if done or trunc or self.env.check_failure():
                 break
-
+        valid_outcome = fact.outcome.cf_outcome(self.env, self.bb_model, None, None)
         # IMPORTANT: return 1 if the class hasn't changed -- to be compatible with minimization used by NSGA
-        return self.env.check_failure()
+        return not valid_outcome
 
     def sparsity(self, fact, actions):
         return 1 - (sum(np.array(fact.actions) == np.array(actions)) / len(actions))
@@ -77,7 +77,8 @@ class BackObj(AbstractObj):
                 if done or trunc or self.env.check_failure():
                     break
 
-            if not self.env.check_failure():
+            valid_outcome = fact.outcome.cf_outcome(self.env, self.bb_model, obs, None)
+            if valid_outcome:
                 cnt += 1
 
         return 1 - ((cnt * 1.0)/n_sim)

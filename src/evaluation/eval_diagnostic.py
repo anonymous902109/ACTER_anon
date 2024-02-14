@@ -15,9 +15,14 @@ def generate_counterfactuals(methods, method_names, facts, env, eval_path, param
         for i, t in tqdm(enumerate(facts)):
             res = m.generate_counterfactuals(t)
             for cf in res:
-                record.append([i, list(cf.fact), list(cf.recourse), *list(cf.reward_dict.values()), cf.value]) # TODO: add fact as value to CF class
+                record.append([i,
+                               list(cf.fact.end_state),
+                               list(cf.fact.actions),
+                               list(cf.recourse),
+                               *list(cf.reward_dict.values()),
+                               cf.value])
 
-            columns = ['Fact id', 'Fact', 'Recourse'] + m.obj.objectives + m.obj.constraints + ['Value']
+            columns = ['Fact id', 'Fact end state', 'Fact actions', 'Recourse'] + m.obj.objectives + m.obj.constraints + ['Value']
             df = pd.DataFrame(record, columns=columns)
             df.to_csv(eval_path_results)
 

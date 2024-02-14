@@ -111,14 +111,9 @@ class AbstractObj():
                 available_actions = self.env.get_actions(obs)
 
             if not early_break:
-                # count how many different actions are chosen after the path
-                outcome = self.bb_model.predict(obs)  # TODO: change this to generic outcome
-                if outcome in list(diff_outcomes.keys()):
-                    diff_outcomes[outcome] += 1
-                else:
-                    diff_outcomes[outcome] = 1
-
-                target_outcome += (outcome == target_action)
+                # check if counterfactual outcome is satisfied
+                valid_outcome = fact.outcome.cf_outcome(self.env, bb_model, obs, target_action)
+                target_outcome += valid_outcome
 
                 fidelities.append(1 - fid/len(actions))
 
