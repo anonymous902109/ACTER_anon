@@ -17,12 +17,12 @@ class FidRACCER(AbstractBaseline):
 
         super(FidRACCER, self).__init__()
 
-    def generate_counterfactuals(self, fact, target):
-        return self.get_best_cf(fact, target)
+    def generate_counterfactuals(self, fact):
+        return self.get_best_cf(fact)
 
-    def get_best_cf(self, fact, target):
+    def get_best_cf(self, fact):
         ''' Returns all cfs found in the tree '''
-        cfs = self.optim.alg.search(init_state=fact, fact=fact, target_action=target)
+        cfs = self.optim.alg.search(init_state=fact.end_state, fact=fact)
 
         if len(cfs):
             cfs = [CF(fact, cf[0], cf[1], cf[2], cf[3]) for cf in cfs]
@@ -32,9 +32,9 @@ class FidRACCER(AbstractBaseline):
             best_cfs = [cf for cf in cfs if cf.value == best_value]
 
             best_cf = self.choose_closest(best_cfs, fact)
-            return best_cf
+            return [best_cf]
         else:
-            return None
+            return []
 
     def choose_closest(self, cfs, fact):
         diffs = []

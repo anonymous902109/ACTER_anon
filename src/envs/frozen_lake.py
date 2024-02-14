@@ -169,7 +169,7 @@ class FrozenLake(AbstractEnv):
 
         self.steps = 0
 
-        self.random_generator = env_state  # set random generator to the same values
+        self.random_generator = env_state  # TODO: set random generator to the same values
 
     def set_nonstoch_state(self, state, env_state):
         self.set_stochastic_state(state, env_state)

@@ -32,7 +32,7 @@ class TreeSearch:
         else:
             return None
 
-        return best_cf
+        return [best_cf]
 
     def traverse(self, root, nodes=None):
         ''' Returns all nodes in the tree '''

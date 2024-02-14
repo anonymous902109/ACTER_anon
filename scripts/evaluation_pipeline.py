@@ -62,8 +62,8 @@ def main(task_name, agent_type):
     # acter_discrete = BackGenDiscrete(env, bb_model, params)
     fid_raccer = FidRACCER(env, bb_model, params)
 
-    methods = [acter, fid_raccer]
-    method_names = ['ACTER', 'raccer']
+    methods = [fid_raccer]
+    method_names = ['raccer']
 
     generate_counterfactuals(methods, method_names, facts, env, eval_path, params)
 

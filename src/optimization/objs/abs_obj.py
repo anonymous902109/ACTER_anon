@@ -15,7 +15,8 @@ class AbstractObj():
 
         self.num_objectives = len(self.lmbdas)
 
-        # self.n_sim = params['n_sim']
+        self.n_sim = params['n_sim']
+        self.max_actions = params['horizon']
 
     def get_ind_unweighted_rews(self, fact, cf, target_action, actions, cummulative_reward):
         objectives = self.get_objectives(fact, cf, actions, target_action)
@@ -84,9 +85,9 @@ class AbstractObj():
 
         for s in range(n_sim):
             self.env.reset()
-            self.env.set_stochastic_state(fact)
+            self.env.set_stochastic_state(fact.end_state, fact.env_states[-1])
 
-            obs = fact
+            obs = fact.end_state
 
             fid = 0.0
 
@@ -105,7 +106,7 @@ class AbstractObj():
                 prob = bb_model.get_action_prob(obs, a)
                 fid += prob
 
-                obs, rew, done, _ = self.env.step(a)
+                obs, rew, done, trunc, _ = self.env.step(a)
                 ep_rew += rew
 
                 available_actions = self.env.get_actions(obs)
@@ -126,10 +127,9 @@ class AbstractObj():
             stochasticity = 1
 
         validity = 1 - target_outcome / n_sim
-        cost = (total_cost / n_sim) / (self.max_actions * self.env.max_penalty)
         if len(fidelities):
             fidelity = sum(fidelities) / (len(fidelities) * 1.0)
         else:
             fidelity = 1
 
-        return stochasticity, validity, cost, fidelity
+        return stochasticity, validity, fidelity

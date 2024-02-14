@@ -18,8 +18,8 @@ class HeuristicTSAlgorithm:
 
         self.tree_size = 0
 
-    def search(self, init_state, fact, target_action):
-        self.root = TreeNode(init_state, None, None, 0, self.env, self.bb_model, self.obj, fact, target_action)
+    def search(self, init_state, fact):
+        self.root = TreeNode(init_state, None, None, 0, self.env, self.bb_model, self.obj, fact, valid=False)
         self.cfs = []
 
         i = 0

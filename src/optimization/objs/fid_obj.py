@@ -10,10 +10,11 @@ class FidObj(AbstractObj):
         self.bb_model = bb_model
         max_actions = params['max_actions']
         self.objectives = ['fidelity', 'reachability', 'stochastic_validity']
+        self.constraints = []
         super(FidObj, self).__init__(env, bb_model, params)
 
     def get_objectives(self, fact, cf, actions, target_action):
-        stochasticity, validity, cost, fidelity = self.calculate_stochastic_rewards(fact, actions, target_action, self.bb_model)
+        stochasticity, validity, fidelity = self.calculate_stochastic_rewards(fact, actions, target_action, self.bb_model)
 
         reachability = self.reachability(actions)
 
