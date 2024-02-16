@@ -11,7 +11,7 @@ from src.models.torch_ds import TorchTrajectoryDataset
 class EncoderDecoder:
 
     def __init__(self, env, bb_model, path, k=10):
-        self.dim = (1 + env.state_dim) * k # dimension of input
+        self.dim = (k+1) * env.state_dim + k # dimension of input k + 1 states amd k actions
         self.enc = Encoder(self.dim)
         self.dec = Decoder(self.dim)
 

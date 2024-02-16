@@ -10,14 +10,14 @@ def generate_counterfactuals(methods, method_names, facts, outcome, env, eval_pa
     print('Generating counterfactuals for {} facts'.format(len(facts)))
     for i_m, m in enumerate(methods):
         record = []
-        eval_path_results = os.path.join(eval_path, f'{outcome.name}_{method_names[i_m]}/results.csv')
+        eval_path_results = os.path.join(eval_path, f'{method_names[i_m]}/{outcome.name}_results.csv')
         print('Method = {}'.format(method_names[i_m]))
         for i, t in tqdm(enumerate(facts)):
             res = m.generate_counterfactuals(t)
             for cf in res:
                 record.append([i,
-                               list(cf.fact.end_state),
-                               list(cf.fact.actions),
+                               list(t.end_state),
+                               list(t.actions),
                                list(cf.recourse),
                                *list(cf.reward_dict.values()),
                                cf.value])

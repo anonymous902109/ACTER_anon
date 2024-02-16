@@ -38,10 +38,12 @@ class CustomDataset:
                     actions.append(action)
                     obs, rew, done, trunc,  info = env.step(action)
 
+                ds.append(list(obs))
+
                 # generate a set of trajectories of len k
                 if c >= k:
-                    for l in range(c - k):
-                        ds_len_k.append(list(np.array(ds[l:l+k]).flatten()) + actions[l:l+k])  # append observations and actions
+                    for l in range(c - k - 1):
+                        ds_len_k.append(list(np.array(ds[l:l+k+1]).flatten()) + actions[l:l+k])  # append observations and actions
 
             df = pd.DataFrame(ds_len_k)
             df = df.drop_duplicates()
