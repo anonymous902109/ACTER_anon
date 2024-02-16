@@ -1,5 +1,5 @@
 {
-    "horizon": 5,
+    "horizon": 3,
     "xl": 0,
     "xu": 4,
     "n_gen": 10,

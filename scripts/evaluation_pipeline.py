@@ -39,7 +39,7 @@ def main(task_name, agent_type):
         training_timesteps = int(1e4)
     elif task_name == 'frozen_lake':
         env = FrozenLake()
-        training_timesteps = int(1e4)
+        training_timesteps = int(1e5)
 
     # load bb model
     bb_model = DQNModel(env, model_path, training_timesteps)

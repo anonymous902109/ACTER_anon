@@ -109,6 +109,8 @@ def generate_paths_with_outcome(outcome, csv_path, env, bb_model, n_ep=1000, hor
 
                         buffer.stop_current_episode()
 
+                    done = True
+
                 obs = new_obs
 
         # save buffer

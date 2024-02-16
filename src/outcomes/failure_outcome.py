@@ -11,4 +11,4 @@ class FailureOutcome(AbstractOutcome):
         return not env.check_failure()  # counterfactual where one specific action is required
 
     def explain_outcome(self, env, state=None):
-        return env.check_failure()  # if failure explain this outcome
+        return env.check_failure()   # if failure explain this outcome

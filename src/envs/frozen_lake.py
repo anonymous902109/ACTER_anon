@@ -6,7 +6,7 @@ import gymnasium as gym
 from src.envs.abs_env import AbstractEnv
 import numpy as np
 
-FROZEN_SQUARES = [10, 11, 12, 20, 21, 22]
+FROZEN_SQUARES = [10, 11, 12, 15, 16, 17]
 
 
 class FrozenLake(AbstractEnv):
