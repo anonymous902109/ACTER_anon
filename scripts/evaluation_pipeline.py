@@ -68,7 +68,7 @@ def main(task_name, agent_type):
     fid_raccer = FidRACCER(env, bb_model, params)
 
     methods = [acter, acter_discrete, fid_raccer]
-    method_names = ['ACTER', 'ACTER_discrete''RACCER']
+    method_names = ['ACTER', 'ACTER_discrete', 'RACCER']
 
     for f in facts:
         generate_counterfactuals(methods, method_names, f, f[0].outcome, env, eval_path, params)

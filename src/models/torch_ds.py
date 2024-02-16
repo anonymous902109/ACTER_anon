@@ -4,7 +4,7 @@ from src.models.customdataset import CustomDataset
 
 class TorchTrajectoryDataset(Dataset):
     def __init__(self, env, bb_model, path, k):
-        self.ds = CustomDataset(env, bb_model, path, k)._dataset.sample(50000)
+        self.ds = CustomDataset(env, bb_model, path, k)._dataset
 
     def __len__(self):
         return len(self.ds)
