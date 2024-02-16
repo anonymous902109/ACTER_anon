@@ -28,7 +28,7 @@ class TreeNode:
         if valid is not None:
             self.valid_outcome = valid
         else:
-            self.valid_outcome = self.fact.outcome.cf_outcome(self.env, bb_model, self.state, None)
+            self.valid_outcome = self.fact.outcome.cf_outcome(self.env, self.state)
 
     def available_actions(self):
         return self.env.get_actions(self.state)

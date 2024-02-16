@@ -36,10 +36,10 @@ def main(task_name, agent_type):
         training_timesteps = int(5e4)
     elif task_name == 'gridworld':
         env = Gridworld()
-        training_timesteps = int(3e5)
+        training_timesteps = int(1e4)
     elif task_name == 'frozen_lake':
         env = FrozenLake()
-        training_timesteps = int(3e5)
+        training_timesteps = int(1e4)
 
     # load bb model
     bb_model = DQNModel(env, model_path, training_timesteps)
@@ -50,22 +50,28 @@ def main(task_name, agent_type):
         print('Task = {}\nParameters = {}'.format(task_name, params))
 
     # define target outcomes
-    failure_outcome = FailureOutcome()
-    action_outcome = ActionOutcome()
-    one_action_outcome = ActionOutcome()
+    failure_outcome = FailureOutcome(bb_model)
+    action_outcome = ActionOutcome(bb_model)
+    one_action_outcome = ActionOutcome(bb_model)
+
+    outcomes = [failure_outcome, action_outcome, one_action_outcome]
 
     # generate facts
-    facts = generate_paths_with_outcome(failure_outcome, outcome_traj_path, env, bb_model, horizon=params['horizon'])
+    facts = []
+    for o in outcomes:
+        f = generate_paths_with_outcome(o, outcome_traj_path, env, bb_model, horizon=params['horizon'])
+        facts.append(f[0:10])
 
     # define algorithms
     acter = BackGen(env, bb_model, params)
-    # acter_discrete = BackGenDiscrete(env, bb_model, params)
+    acter_discrete = BackGenDiscrete(env, bb_model, params)
     fid_raccer = FidRACCER(env, bb_model, params)
 
-    methods = [fid_raccer]
-    method_names = ['raccer']
+    methods = [acter, acter_discrete, fid_raccer]
+    method_names = ['ACTER', 'ACTER_discrete''RACCER']
 
-    generate_counterfactuals(methods, method_names, facts, env, eval_path, params)
+    for f in facts:
+        generate_counterfactuals(methods, method_names, f, f[0].outcome, env, eval_path, params)
 
 
 if __name__ == '__main__':

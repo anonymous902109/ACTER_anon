@@ -5,12 +5,12 @@ import numpy as np
 from tqdm import tqdm
 
 
-def generate_counterfactuals(methods, method_names, facts, env, eval_path, params):
+def generate_counterfactuals(methods, method_names, facts, outcome, env, eval_path, params):
     ''' Generates counterfactual explanations for each passed failure trajectory using each model '''
     print('Generating counterfactuals for {} facts'.format(len(facts)))
     for i_m, m in enumerate(methods):
         record = []
-        eval_path_results = os.path.join(eval_path, f'{method_names[i_m]}/results.csv')
+        eval_path_results = os.path.join(eval_path, f'{outcome.name}_{method_names[i_m]}/results.csv')
         print('Method = {}'.format(method_names[i_m]))
         for i, t in tqdm(enumerate(facts)):
             res = m.generate_counterfactuals(t)

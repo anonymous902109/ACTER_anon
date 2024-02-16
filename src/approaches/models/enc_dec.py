@@ -11,8 +11,9 @@ from src.models.torch_ds import TorchTrajectoryDataset
 class EncoderDecoder:
 
     def __init__(self, env, bb_model, path, k=10):
-        self.enc = Encoder()
-        self.dec = Decoder()
+        self.dim = (1 + env.state_dim) * k # dimension of input
+        self.enc = Encoder(self.dim)
+        self.dec = Decoder(self.dim)
 
         self.ds = TorchTrajectoryDataset(env, bb_model, path + 'dataset_enc_dec.csv', k)
         self.train(path)
@@ -95,15 +96,15 @@ class EncoderDecoder:
 
 class Encoder(nn.Module):
 
-    def __init__(self):
+    def __init__(self, dim):
         super(Encoder, self).__init__()
         layers = []
 
-        layers.append(nn.Linear(110, 128))  # TODO: remove hardcoding (horizon * state space) + horizon
+        layers.append(nn.Linear(dim, 128))
         layers.append(nn.ReLU())
         layers.append(nn.Linear(128, 128))
         layers.append(nn.ReLU())
-        layers.append(nn.Linear(128, 32)) # TODO: add this as param
+        layers.append(nn.Linear(128, 32))
         layers.append(nn.Tanh())
 
         self.main = nn.Sequential(*layers)
@@ -117,7 +118,7 @@ class Encoder(nn.Module):
 
 class Decoder(nn.Module):
 
-    def __init__(self):
+    def __init__(self, dim):
         super(Decoder, self).__init__()
         layers = []
 
@@ -125,7 +126,7 @@ class Decoder(nn.Module):
         layers.append(nn.ReLU())
         layers.append(nn.Linear(128, 128))
         layers.append(nn.ReLU())
-        layers.append(nn.Linear(128, 110))
+        layers.append(nn.Linear(128, dim))
         layers.append(nn.ReLU())
 
         self.main = nn.Sequential(*layers)

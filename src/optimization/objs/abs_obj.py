@@ -85,6 +85,7 @@ class AbstractObj():
 
         for s in range(n_sim):
             self.env.reset()
+            # set env to last state -- failure state, this is used by raccer
             self.env.set_stochastic_state(fact.end_state, fact.env_states[-1])
 
             obs = fact.end_state
@@ -113,7 +114,7 @@ class AbstractObj():
 
             if not early_break:
                 # check if counterfactual outcome is satisfied
-                valid_outcome = fact.outcome.cf_outcome(self.env, bb_model, obs, target_action)
+                valid_outcome = fact.outcome.cf_outcome(self.env, obs)
                 target_outcome += valid_outcome
 
                 fidelities.append(1 - fid/len(actions))

@@ -45,7 +45,7 @@ class BackObj(AbstractObj):
             obs, _, done, trunc, _ = self.env.step(a)
             if done or trunc or self.env.check_failure():
                 break
-        valid_outcome = fact.outcome.cf_outcome(self.env, self.bb_model, None, None)
+        valid_outcome = fact.outcome.cf_outcome(self.env, obs)
         # IMPORTANT: return 1 if the class hasn't changed -- to be compatible with minimization used by NSGA
         return not valid_outcome
 
@@ -77,7 +77,7 @@ class BackObj(AbstractObj):
                 if done or trunc or self.env.check_failure():
                     break
 
-            valid_outcome = fact.outcome.cf_outcome(self.env, self.bb_model, obs, None)
+            valid_outcome = fact.outcome.cf_outcome(self.env, obs)
             if valid_outcome:
                 cnt += 1
 

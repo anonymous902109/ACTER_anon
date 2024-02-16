@@ -1,6 +1,6 @@
 class Trajectory:
 
-    def __init__(self, outcome, id=0):
+    def __init__(self, id, outcome):
         self.id = id
         self.states = []
         self.actions = []
@@ -15,7 +15,10 @@ class Trajectory:
 
     def append(self, state, action, env_unwrapped):
         self.states.append(state)
-        self.actions.append(action)
+        if action != None:
+            self.actions.append(action)
+        else:
+            self.set_end_state(state)
         self.env_states.append(env_unwrapped)
 
     def set_end_state(self, end_state):

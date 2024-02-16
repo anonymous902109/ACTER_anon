@@ -1,10 +1,13 @@
-class AbstractOutcome():
+class AbstractOutcome:
 
-    def __init__(self):
-        self.target_outcome = None
-        self.failure_outcome = None
+    def __init__(self, bb_model, target_action=None, true_action=None):
+        self.true_action = true_action
+        self.target_action = target_action
 
-        self.target_action = None
+        self.bb_model = bb_model
 
-    def cf_outcome(self, env, bb_model, state, action):
+    def cf_outcome(self, env, state):
         return True
+
+    def explain_outcome(self, env, state=None):
+        return None

@@ -68,7 +68,7 @@ def load_facts_from_json(fact_file):
     return facts, targets
 
 
-def generate_paths_with_outcome(outcome, csv_path, env, bb_model, n_ep=20000, horizon=5):
+def generate_paths_with_outcome(outcome, csv_path, env, bb_model, n_ep=1000, horizon=5):
     ''' Generates a dataset of Trajectory objects where a failure happens
     :param csv_path: path to save the dataset
     :param env: gym gym_env
@@ -84,17 +84,8 @@ def generate_paths_with_outcome(outcome, csv_path, env, bb_model, n_ep=20000, ho
         # transform into traj class
         trajs = []
         episodes = [e for e in episodes if len(e) >= horizon]
-        for e_id, e in enumerate(episodes):
-            t = Trajectory(id=e_id, outcome=outcome)
-            for i in e:
-                if i['action'] is not None:
-                    t.append(i['state'], i['action'], i['next_action'])
-                else:
-                    t.set_end_state(i['state'])
+        return combine_trajs(episodes, outcome)
 
-            if len(t.actions) >= horizon:
-                trajs.append(t)
-        return trajs
     except FileNotFoundError:
         print('Generating failure trajectories...')
         buffer = EpisodicReplayBuffer(capacity=10000000)
@@ -112,12 +103,11 @@ def generate_paths_with_outcome(outcome, csv_path, env, bb_model, n_ep=20000, ho
 
                 if outcome.explain_outcome(env):
                     p.append((copy.copy(new_obs), None, None, None, copy.deepcopy(env.get_env_state()))) # add the last state -- failure state with None as action identifier
-                    if (len(p) - 1) >= horizon: # have to subtract the last state because it doesn't have an action with it
+                    if (len(p) - 1) >= horizon:  # have to subtract the last state because it doesn't have an action with it
                         for t in p[-(horizon+1):]:
                             buffer.append(*t)
 
                         buffer.stop_current_episode()
-                    # done = True   # end episode after failure to prevent first failure
 
                 obs = new_obs
 
@@ -125,21 +115,22 @@ def generate_paths_with_outcome(outcome, csv_path, env, bb_model, n_ep=20000, ho
         buffer.save(csv_path)
         episodes = buffer.sample_episodes(n_episodes=len(buffer.episodic_memory))
 
-        # transform into traj class
-        trajs = []
-        for e_id, e in enumerate(episodes):
-            t = Trajectory(e_id, outcome)
-            for i in e:
-                if i['action'] is not None: # it's not the last state -- failure state then add
-                    t.append(i['state'], i['action'], i['next_action'])
-                else:
-                    t.set_end_state(i['state'])
+        return combine_trajs(episodes, outcome)
 
-            if len(t.actions) >= horizon:
-                trajs.append(t)
 
-        print('Generated {} failure trajectories'.format(len(trajs)))
-        return trajs
+def combine_trajs(episodes, outcome):
+    # transform into traj class
+    trajs = []
+    for e_id, e in enumerate(episodes):
+        t = Trajectory(e_id, outcome)
+        for i in e:
+            t.append(i['state'], i['action'], i['next_action'])
+
+        t.outcome.true_action = t.actions[-1]
+        trajs.append(t)
+
+    print('Generated {} failure trajectories'.format(len(trajs)))
+    return trajs
 
 
 def load_facts_from_csv(csv_path, env, bb_model, n_ep=100):

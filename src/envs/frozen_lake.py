@@ -6,7 +6,7 @@ import gymnasium as gym
 from src.envs.abs_env import AbstractEnv
 import numpy as np
 
-FROZEN_SQUARES = [2, 12, 23, 15, 14]
+FROZEN_SQUARES = [10, 11, 12, 20, 21, 22]
 
 
 class FrozenLake(AbstractEnv):
@@ -14,7 +14,7 @@ class FrozenLake(AbstractEnv):
         super(FrozenLake, self).__init__()
 
         self.world_dim = 5
-        self.state_dim = 7
+        self.state_dim = 8
 
         self.lows = np.zeros((self.state_dim,))
         self.highs = np.ones((self.state_dim,))
@@ -23,7 +23,7 @@ class FrozenLake(AbstractEnv):
         self.observation_space = gym.spaces.Box(low=self.lows, high=self.highs, shape=(self.state_dim, ))
         self.action_space = gym.spaces.Discrete(5)
 
-        self.state = np.zeros((10, ))
+        self.state = np.zeros((self.state_dim, ))
 
         self.steps = 0
         self.max_steps = 200
