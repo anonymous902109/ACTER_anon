@@ -18,6 +18,7 @@ class DQNModel:
             # try loading the model if already trained
             model = DQN.load(model_path)
             model.env = env
+            model.policy.to('cpu')
             print('Loaded bb model')
         except FileNotFoundError:
             # train a new model

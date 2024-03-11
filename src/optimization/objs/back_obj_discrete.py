@@ -56,13 +56,14 @@ class BackObjDiscrete(BackObj):
         i = 0
         for a in actions:
             obs, _, done, trunc, _ = self.env.step(a)
-            if (i != len(actions) - 1):
-                t.extend(list(obs.flatten())) # don't add the last state
+
+            t.extend(list(obs.flatten()))  # add the last state too
+
             i += 1
             if done or trunc or self.env.check_failure():
                 break
 
-        while i < (len(actions) - 1):
+        while i < len(actions):
             # not all actions have been executed because of validity being broken
             t.extend(list(self.env.reset()[0].flatten()))  # add a random state to fill up space
             i += 1

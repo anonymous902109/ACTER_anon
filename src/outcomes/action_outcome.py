@@ -9,5 +9,4 @@ class ActionOutcome(AbstractOutcome):
         self.name = 'change_{}_to_{}'.format(self.true_action, self.target_action)
 
     def cf_outcome(self, env, state):
-        # return action != bb_model.predict(state) # counterfactual where any alternative action is chosen
-        pass
+        return self.true_action != self.bb_model.predict(state)  # counterfactual where any alternative action is chosen

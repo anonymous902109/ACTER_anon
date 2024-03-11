@@ -1,7 +1,7 @@
 import copy
-import random
+from datetime import datetime
 
-import gym
+import gymnasium as gym
 import numpy as np
 
 from src.envs.abs_env import AbstractEnv
@@ -41,6 +41,8 @@ class Gridworld(AbstractEnv):
         self.TREE_POS_TYPES = {2: 3, 7: 4, 12: 4, 17: 4, 22: 3}
         self.TREE_POS = [2, 7, 12, 17, 22]
 
+        self.random_generator = np.random.default_rng(seed=0)
+
     def step(self, action):
         if isinstance(action, str):
             action = self.ACTIONS[action]
@@ -50,7 +52,7 @@ class Gridworld(AbstractEnv):
         self.state = new_state
         self.steps += 1
 
-        return new_state.flatten(), rew, done, {}
+        return new_state.flatten(), rew, done, done, {}
 
     def create_state(self, agent, monster, trees, chopping, chopped_trees=[], killed_monster=False):
         state = [0] * self.state_dim
@@ -129,6 +131,8 @@ class Gridworld(AbstractEnv):
                     new_array = self.create_state(agent, monster, trees, self.chopping, killed_monster=True)
                     return new_array, True, self.goal_rew
 
+                self.failure = True
+
         # regrow trees in the middle column
         new_trees = self.regrow(trees, agent, monster, chopped_trees)
         trees += new_trees
@@ -146,7 +150,7 @@ class Gridworld(AbstractEnv):
         new_trees = []
         for i in free_squares:
             p = self.FERTILITY[i]
-            regrow_i = random.choices([0, 1], weights=[1-p, p])[0]
+            regrow_i = self.random_generator.choice([0, 1], p=[1-p, p])
             if regrow_i == 1:
                 tree_type = self.TREE_POS_TYPES[i]
                 new_trees.append({i: tree_type})
@@ -196,18 +200,21 @@ class Gridworld(AbstractEnv):
 
         return True
 
-    def reset(self):
-        monster = random.randint(0, self.world_dim * self.world_dim - 1)
-        agent = random.randint(0, self.world_dim * self.world_dim - 1)
+    def reset(self, seed=0):
+        self.random_generator = np.random.default_rng(seed=0)
+        self.failure = False
+
+        monster = self.random_generator.integers(0, self.world_dim * self.world_dim - 1, size=1)
+        agent = self.random_generator.integers(0, self.world_dim * self.world_dim - 1)
 
         while agent % 5 > 1:
-            agent = random.randint(0, self.world_dim * self.world_dim - 1)
+            agent = self.random_generator.integers(0, self.world_dim * self.world_dim - 1)
 
         while monster % 5 < 3:
-            monster = random.randint(0, self.world_dim * self.world_dim - 1)
+            monster = self.random_generator.integers(0, self.world_dim * self.world_dim - 1)
 
         tree_wall = np.array(self.TREE_POS)
-        tree_pos = np.random.uniform(0, 1, 5) > 0.5
+        tree_pos = self.random_generator.uniform(0, 1, 5) > 0.5
         tree_pos = tree_wall[tree_pos]
         trees = []
         for t in tree_pos:
@@ -219,7 +226,7 @@ class Gridworld(AbstractEnv):
         self.state = self.create_state(agent, monster, trees, self.chopping)
 
         self.steps = 0
-        return self.state.flatten()
+        return self.state.flatten(), None
 
     def close(self):
         pass
@@ -304,12 +311,6 @@ class Gridworld(AbstractEnv):
         return True
 
     def actionable(self, x, fact):
-        # monster = list(np.where(fact == self.OBJECTS['MONSTER'])[0])
-        #
-        # if len(monster) != 1:
-        #     return False
-        #
-        # return abs(x[monster] == self.OBJECTS['MONSTER']).item()
         return True
 
     def generate_state_from_json(self, json_dict):
@@ -344,4 +345,21 @@ class Gridworld(AbstractEnv):
         ws = 'Agent: {} Monster: {} Trees: {}'.format(agent, monster, trees)
         return ws
 
+    def check_failure(self):
+        return self.failure
 
+    def get_env_state(self):
+        return self.random_generator
+
+    def action_distance(self, a, b):
+        return a != b
+
+    def set_stochastic_state(self, state, env_state):
+        ''' Changes the environment's current state to x '''
+        self.set_state(state)
+
+        self.random_generator = env_state  # TODO: set random generator to the same values
+
+    def set_nonstoch_state(self, state, env_state):
+        self.set_stochastic_state(state, env_state)
+        self.random_generator = np.random.default_rng(seed=int(datetime.now().timestamp()))  # reset random generator

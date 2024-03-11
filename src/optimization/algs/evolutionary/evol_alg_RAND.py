@@ -41,7 +41,8 @@ class EvolutionAlgRAND(EvolutionAlgSO):
                            algorithm,
                            ('n_gen', self.n_gen),
                            seed=self.seed,
-                           verbose=True)
+                           verbose=False)
+
             if cfs.X is not None:
                 div_res.append((cfs.X, cfs.F, cf_problem.rew_dict[tuple(cfs.X)]))
 

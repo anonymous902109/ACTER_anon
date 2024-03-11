@@ -3,6 +3,7 @@ import json
 from src.approaches.backward_cfs.backward_generator import BackGen
 from src.approaches.backward_cfs.backwards_generator_discrete import BackGenDiscrete
 from src.approaches.raccer.fid_raccer import FidRACCER
+from src.envs.bike_sharing import BikeSharing
 from src.envs.farm0 import Farm0
 from src.envs.frozen_lake import FrozenLake
 from src.envs.gridworld import Gridworld
@@ -40,6 +41,8 @@ def main(task_name, agent_type):
     elif task_name == 'frozen_lake':
         env = FrozenLake()
         training_timesteps = int(1e5)
+    elif task_name == 'bikes':
+        env = BikeSharing()
 
     # load bb model
     bb_model = DQNModel(env, model_path, training_timesteps)
@@ -54,7 +57,7 @@ def main(task_name, agent_type):
     action_outcome = ActionOutcome(bb_model)
     one_action_outcome = ActionOutcome(bb_model)
 
-    outcomes = [failure_outcome, action_outcome, one_action_outcome]
+    outcomes = [failure_outcome]
 
     # generate facts
     facts = []
@@ -67,16 +70,16 @@ def main(task_name, agent_type):
     acter_discrete = BackGenDiscrete(env, bb_model, params)
     fid_raccer = FidRACCER(env, bb_model, params)
 
-    methods = [acter_discrete, fid_raccer]
-    method_names = ['ACTER_discrete', 'RACCER']
+    methods = [fid_raccer, acter, acter_discrete]
+    method_names = ['RACCER', 'ACTER', 'ACTER_discrete']
 
     for f in facts:
-        generate_counterfactuals(methods, method_names, f, f[0].outcome, env, eval_path, params)
+        generate_counterfactuals(methods, method_names, f, outcomes[0], env, eval_path, params)
 
 
 if __name__ == '__main__':
-    tasks = ['frozen_lake', 'gridworld', 'farm0', 'highway']
-    agent_types = ['optim', 'suboptim', 'non_optim']
+    tasks = [ 'gridworld', 'farm0', 'highway']
+    agent_types = ['optim']
 
     for t in tasks:
         for a in agent_types:

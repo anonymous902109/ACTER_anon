@@ -101,12 +101,11 @@ class FrozenLake(AbstractEnv):
         self.render_state(self.state)
 
     def reset(self, seed=0):
-        random.seed(seed)
         self.steps = 0
         self.failure = False
 
-        agent = random.choice(self.AGENT_START_STATES)
-        goal = random.choice(self.GOAL_STATES)
+        agent = self.random_generator.choice(self.AGENT_START_STATES)
+        goal = self.random_generator.random.choice(self.GOAL_STATES)
 
         self.state = {
             'agent': agent,

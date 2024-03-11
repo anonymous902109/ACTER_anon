@@ -50,7 +50,7 @@ class EvolutionaryAlg:
                        algorithm,
                        ('n_gen', self.n_gen),
                        seed=self.seed,
-                       verbose=1)
+                       verbose=False)
 
         res = []
         if cfs.X is None:

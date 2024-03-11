@@ -38,7 +38,7 @@ class EvolutionAlgSO(EvolutionaryAlg):
                        algorithm,
                        ('n_gen', self.n_gen),
                        seed=self.seed,
-                       verbose=True)
+                       verbose=False)
 
         cfs = []
         vals = []
