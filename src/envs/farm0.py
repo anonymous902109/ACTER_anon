@@ -26,7 +26,6 @@ class Farm0(AbstractEnv):
         self.action_space_low = 0
         self.action_space_high = 10
 
-
     def step(self, action):
         action = self.decode_action(action)
         try:

@@ -13,7 +13,6 @@ class Gridworld(AbstractEnv):
         super(Gridworld, self).__init__()
 
         self.world_dim = 5
-
         self.state_dim = 26
 
         self.chopping = 0
@@ -30,17 +29,16 @@ class Gridworld(AbstractEnv):
         self.observation_space = gym.spaces.Box(self.lows, self.highs, shape=(self.state_dim, ))
         self.action_space = gym.spaces.Discrete(6)
 
-        self.max_feature = 24
-
         self.ACTIONS = {'RIGHT': 0, 'DOWN': 1, 'LEFT': 2, 'UP': 3, 'CHOP': 4, 'SHOOT': 5}
         self.OBJECTS = {'AGENT': 1, 'MONSTER': 2, 'TREE': 3, 'KILLED_MONSTER': -1}
 
         self.TREE_TYPES = {3: 1, 4: 1}   # indicates # steps needed to destroy tree
         self.TREE_REWS = {3: -1, 4: -5}  # penalty for destroying object
         self.FERTILITY = {2: 0.2, 7: 0.2, 12: 0.2, 17: 0.2, 22: 0.2}  # prob of regrowth each step
-        self.TREE_POS_TYPES = {2: 3, 7: 4, 12: 4, 17: 4, 22: 3}
+        self.TREE_POS_TYPES = {2: 3, 7: 4, 12: 4, 17: 4, 22: 3}  # types of trees at different positions
         self.TREE_POS = [2, 7, 12, 17, 22]
 
+        # random generator controlling all stochasticity in the environment
         self.random_generator = np.random.default_rng(seed=0)
 
     def step(self, action):
@@ -201,7 +199,7 @@ class Gridworld(AbstractEnv):
         return True
 
     def reset(self, seed=0):
-        self.random_generator = np.random.default_rng(seed=0)
+        self.random_generator = np.random.default_rng(seed=seed)
         self.failure = False
 
         monster = self.random_generator.integers(0, self.world_dim * self.world_dim - 1, size=1)

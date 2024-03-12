@@ -16,13 +16,18 @@ def generate_counterfactuals(methods, method_names, facts, outcome, env, eval_pa
             res = m.generate_counterfactuals(t)
             for cf in res:
                 record.append([i,
+                               list(t.states[0]),
                                list(t.end_state),
                                list(t.actions),
                                list(cf.recourse),
                                *list(cf.reward_dict.values()),
                                cf.value])
 
-            columns = ['Fact id', 'Fact end state', 'Fact actions', 'Recourse'] + m.obj.objectives + m.obj.constraints + ['Value']
+            columns = ['Fact id',
+                       'Fact start state',
+                       'Fact end state',
+                       'Fact actions',
+                       'Recourse'] + m.obj.objectives + m.obj.constraints + ['Value']
             df = pd.DataFrame(record, columns=columns)
             df.to_csv(eval_path_results)
 

@@ -19,8 +19,6 @@ class AbstractEnv(gym.Env):
         self.action_space = None
         self.state_dim = 0
 
-        self.max_penalty = -3
-
         self.failure = False
 
     def step(self, action):
@@ -52,10 +50,11 @@ class AbstractEnv(gym.Env):
         return []
 
     def set_stochastic_state(self, state, env_state):
-        ''' Changes the environment's current state to x '''
+        ''' Changes the environment's current state to x while leaving the stochastic processes unchanged '''
         pass
 
     def set_nonstoch_state(self, state, env_state):
+        ''' Changes the environment's current state to x and the state of the environment to env_state. This way the full stochastic state is copied '''
         pass
 
     def check_done(self, x):
@@ -71,4 +70,14 @@ class AbstractEnv(gym.Env):
         return None
 
     def check_failure(self):
+        ''' Returns whether the environment has encountered a failure '''
         return self.failure
+
+    def get_env_state(self):
+        ''' Returns an object that controls the stochasticity of the environment, usually a random generator'''
+        return None
+
+    def action_distance(self, a, b):
+        ''' Returns a distance between two actions a and b in the environment. Used to calculate the action proximity'''
+        return None # TODO: this should probably not be a part of the environment but the objective function
+

@@ -23,8 +23,6 @@ def main(task_name, agent_type):
 
     # define paths
     model_path = '../trained_models/{}/{}_{}'.format(task_name, task_name, agent_type)
-    fact_csv_dataset_path = '../datasets/{}/facts.csv'.format(task_name, agent_type)
-    fact_json_path = '../fact/{}.json'.format(task_name)
     param_file = '../params/{}.json'.format(task_name)
     generator_path = '../trained_models/generator_{}_{}.ckpt'.format(task_name, agent_type)
     outcome_traj_path = '../datasets/{}/facts/'.format(task_name)
@@ -42,7 +40,7 @@ def main(task_name, agent_type):
         training_timesteps = int(1e4)
     elif task_name == 'frozen_lake':
         env = FrozenLake()
-        training_timesteps = int(1e5)
+        training_timesteps = int(3e5)
     elif task_name == 'bikes':
         env = BikeSharing()
         training_timesteps = int(1e5)
@@ -57,7 +55,6 @@ def main(task_name, agent_type):
 
     # define target outcomes
     failure_outcome = FailureOutcome(bb_model)
-    # action_outcome = ActionOutcome(bb_model)
     one_action_outcomes = [OneActionOutcome(bb_model, target_action=a) for a in range(env.action_space.n)]  # TODO: make action list param in the env
 
     outcomes = [failure_outcome] + one_action_outcomes
