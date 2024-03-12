@@ -33,7 +33,6 @@ def main(task_name):
     fail_success_pair = choose_user_study_traj(failure_trajectories, env,
                                                path='../datasets/{}/fail_success_pairs.pkl'.format(task_name))
 
-
     gan_cf = GANterfactual(env, bb_model, params)
 
     for i, (t, s) in enumerate(fail_success_pair):

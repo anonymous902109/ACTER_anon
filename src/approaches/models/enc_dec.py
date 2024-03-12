@@ -11,7 +11,7 @@ from src.models.torch_ds import TorchTrajectoryDataset
 class EncoderDecoder:
 
     def __init__(self, env, bb_model, path, k=10):
-        self.dim = (k+1) * env.state_dim + k # dimension of input k + 1 states amd k actions
+        self.dim = (k+1) * env.state_dim + k   # dimension of input k + 1 states amd k actions
         self.enc = Encoder(self.dim)
         self.dec = Decoder(self.dim)
 
@@ -80,14 +80,14 @@ class EncoderDecoder:
         return self.dec.float()(x.float()).detach()
 
     def save(self, path):
-        self.enc.save(path + '_enc.zip')
-        self.dec.save(path + '_dec.zip')
+        self.enc.save(path + 'enc.zip')
+        self.dec.save(path + 'dec.zip')
 
     def load(self, path):
-        checkpoint_enc = torch.load(path + '_enc.zip')
+        checkpoint_enc = torch.load(path + 'enc.zip')
         self.enc.load_state_dict(checkpoint_enc)
 
-        checkpoint_dec = torch.load(path + '_dec.zip')
+        checkpoint_dec = torch.load(path + 'dec.zip')
         self.dec.load_state_dict(checkpoint_dec)
 
         self.enc.eval()

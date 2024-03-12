@@ -105,7 +105,7 @@ class FrozenLake(AbstractEnv):
         self.failure = False
 
         agent = self.random_generator.choice(self.AGENT_START_STATES)
-        goal = self.random_generator.random.choice(self.GOAL_STATES)
+        goal = self.random_generator.choice(self.GOAL_STATES)
 
         self.state = {
             'agent': agent,

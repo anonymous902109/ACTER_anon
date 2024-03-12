@@ -59,7 +59,7 @@ class BackObj(AbstractObj):
         k = 2.0/(n * (n + 1))
         weights = [k * (i+1) for i in range(len(actions))]
 
-        weights.reverse() # the biggest penalty for the first (least recent) action
+        weights.reverse()  # the biggest penalty for the first (least recent) action
 
         recency = sum([diff[i] * weights[i] for i in range(len(actions))])
 

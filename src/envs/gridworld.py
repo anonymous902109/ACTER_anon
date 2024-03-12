@@ -35,8 +35,8 @@ class Gridworld(AbstractEnv):
         self.ACTIONS = {'RIGHT': 0, 'DOWN': 1, 'LEFT': 2, 'UP': 3, 'CHOP': 4, 'SHOOT': 5}
         self.OBJECTS = {'AGENT': 1, 'MONSTER': 2, 'TREE': 3, 'KILLED_MONSTER': -1}
 
-        self.TREE_TYPES = {3: 1, 4: 1}  # indicates # steps needed to destroy tree
-        self.TREE_REWS = {3: -1, 4: -1}  # penalty for destroying object
+        self.TREE_TYPES = {3: 1, 4: 1}   # indicates # steps needed to destroy tree
+        self.TREE_REWS = {3: -1, 4: -5}  # penalty for destroying object
         self.FERTILITY = {2: 0.2, 7: 0.2, 12: 0.2, 17: 0.2, 22: 0.2}  # prob of regrowth each step
         self.TREE_POS_TYPES = {2: 3, 7: 4, 12: 4, 17: 4, 22: 3}
         self.TREE_POS = [2, 7, 12, 17, 22]
@@ -122,6 +122,8 @@ class Gridworld(AbstractEnv):
                     self.chopping = 0
 
                     rew = self.TREE_REWS[t_type]
+                    if rew == max(self.TREE_REWS.values()):
+                        self.failure = True  # if the most costly action has been made
 
         elif action == 5:  # SHOOT
             self.chopping = 0
@@ -130,8 +132,6 @@ class Gridworld(AbstractEnv):
                 if free:
                     new_array = self.create_state(agent, monster, trees, self.chopping, killed_monster=True)
                     return new_array, True, self.goal_rew
-
-                self.failure = True
 
         # regrow trees in the middle column
         new_trees = self.regrow(trees, agent, monster, chopped_trees)

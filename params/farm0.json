@@ -1,4 +1,5 @@
 {
+
     "horizon": 10,
     "xl": 0,
     "xu": 10,
@@ -9,6 +10,11 @@
     "diversity_budget_list": [1],
     "n_sim": 10,
     "experience_path": "../datasets/farm0/experience.pkl",
-    "task_name": "farm0"
+    "task_name": "farm0",
+    "ts_n_iter": 100,
+    "ts_n_expand": 20,
+    "max_actions": 20,
+    "max_level": 20,
+    "c": 0.7
 }
 

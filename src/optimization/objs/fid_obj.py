@@ -8,7 +8,6 @@ class FidObj(AbstractObj):
 
     def __init__(self, env, bb_model, params):
         self.bb_model = bb_model
-        max_actions = params['max_actions']
         self.objectives = ['fidelity', 'reachability', 'stochastic_validity']
         self.constraints = []
         super(FidObj, self).__init__(env, bb_model, params)
