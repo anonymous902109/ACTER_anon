@@ -12,7 +12,7 @@ class CustomDataset:
 
         self._dataset = self.generate_dataset(env, bb_model, dataset_path, n_ep=10000, k=k)
 
-    def generate_dataset(self, env, model, dataset_path, n_ep=10000, k=10):
+    def generate_dataset(self, env, model, dataset_path, n_ep=1000, k=10):
         try:
             df = pd.read_csv(dataset_path, index_col=False)
             print('Loaded dataset with {} samples'.format(len(df)))

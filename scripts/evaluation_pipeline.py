@@ -1,4 +1,5 @@
 import json
+import os
 
 from src.approaches.backward_cfs.backward_generator import BackGen
 from src.approaches.backward_cfs.backwards_generator_discrete import BackGenDiscrete
@@ -44,6 +45,7 @@ def main(task_name, agent_type):
         training_timesteps = int(1e5)
     elif task_name == 'bikes':
         env = BikeSharing()
+        training_timesteps = int(1e5)
 
     # load bb model
     bb_model = DQNModel(env, model_path, training_timesteps)
@@ -56,14 +58,14 @@ def main(task_name, agent_type):
     # define target outcomes
     failure_outcome = FailureOutcome(bb_model)
     # action_outcome = ActionOutcome(bb_model)
-    one_action_outcomes = [OneActionOutcome(bb_model, target_action=a) for a in range(env.action_space.n)] # TODO: make action list param in the env
+    one_action_outcomes = [OneActionOutcome(bb_model, target_action=a) for a in range(env.action_space.n)]  # TODO: make action list param in the env
 
     outcomes = [failure_outcome] + one_action_outcomes
 
     # generate facts
     facts = []
     for o in outcomes:
-        f = generate_paths_with_outcome(o, outcome_traj_path + o.name, env, bb_model, horizon=params['horizon'])
+        f = generate_paths_with_outcome(o, os.path.join(outcome_traj_path, o.name), env, bb_model, horizon=params['horizon'])
         facts.append(f[0:10])
 
     # define algorithms
@@ -74,8 +76,8 @@ def main(task_name, agent_type):
     methods = [acter, acter_discrete, fid_raccer]
     method_names = ['ACTER', 'ACTER_discrete', 'RACCER']
 
-    for f in facts:
-        generate_counterfactuals(methods, method_names, f, outcomes[0], env, eval_path, params)
+    for i, f in enumerate(facts):
+        generate_counterfactuals(methods, method_names, f, outcomes[i], env, eval_path, params)
 
 
 if __name__ == '__main__':
