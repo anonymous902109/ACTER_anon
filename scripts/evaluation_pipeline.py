@@ -17,14 +17,13 @@ from src.outcomes.one_action_outcome import OneActionOutcome
 from src.utils.utils import seed_everything, load_facts_from_csv, generate_paths_with_outcome
 
 
-def main(task_name, agent_type):
+def main(task_name):
     print('TASK = {} '.format(task_name))
     seed_everything(seed=1)
 
     # define paths
-    model_path = '../trained_models/{}/{}_{}'.format(task_name, task_name, agent_type)
+    model_path = '../trained_models/{}/{}'.format(task_name, task_name)
     param_file = '../params/{}.json'.format(task_name)
-    generator_path = '../trained_models/generator_{}_{}.ckpt'.format(task_name, agent_type)
     outcome_traj_path = '../datasets/{}/facts/'.format(task_name)
     eval_path = f'../eval/{task_name}/'
 
@@ -34,7 +33,7 @@ def main(task_name, agent_type):
         training_timesteps = int(2e5)
     elif task_name == 'farm0':
         env = Farm0()
-        training_timesteps = int(5e4)
+        training_timesteps = int(1e5)
     elif task_name == 'gridworld':
         env = Gridworld()
         training_timesteps = int(1e4)
@@ -55,9 +54,10 @@ def main(task_name, agent_type):
 
     # define target outcomes
     failure_outcome = FailureOutcome(bb_model)
-    one_action_outcomes = [OneActionOutcome(bb_model, target_action=a) for a in range(env.action_space.n)]  # TODO: make action list param in the env
+    one_action_outcomes = [OneActionOutcome(bb_model, target_action=a) for a in range(env.action_space.n)] # TODO: make action list param in the env
 
-    outcomes = [failure_outcome] + one_action_outcomes
+    # outcomes = [failure_outcome] + one_action_outcomes
+    outcomes = one_action_outcomes[0:1]
 
     # generate facts
     facts = []
@@ -70,17 +70,15 @@ def main(task_name, agent_type):
     acter_discrete = BackGenDiscrete(env, bb_model, params)
     fid_raccer = FidRACCER(env, bb_model, params)
 
-    methods = [acter, acter_discrete, fid_raccer]
-    method_names = ['ACTER', 'ACTER_discrete', 'RACCER']
+    methods = [fid_raccer]
+    method_names = ['RACCER']
 
     for i, f in enumerate(facts):
         generate_counterfactuals(methods, method_names, f, outcomes[i], env, eval_path, params)
 
 
 if __name__ == '__main__':
-    tasks = ['frozen_lake', 'farm0', 'highway']
-    agent_types = ['optim']
+    tasks = ['farm0', 'highway']
 
     for t in tasks:
-        for a in agent_types:
-            main(t, a)
+        main(t)

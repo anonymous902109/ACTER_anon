@@ -8,6 +8,12 @@
     "div_budget": 3,
     "diversity_budget_list": [1,3,5],
     "n_sim": 10,
-    "experience_path": "../datasets/highway/experience.pkl"
+    "ts_n_iter": 300,
+    "ts_n_expand": 20,
+    "max_actions": 20,
+    "max_level": 20,
+    "c": 0.7,
+    "experience_path": "../datasets/highway/experience.pkl",
+    "task_name": "highway"
 }
 

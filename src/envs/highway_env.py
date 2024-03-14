@@ -30,6 +30,7 @@ class HighwayEnv(AbstractEnv):
                 "absolute": False
             }
         }
+        self.state_dim = 7 * 15
         self.gym_env.configure(config)
         self.gym_env.reset()
 

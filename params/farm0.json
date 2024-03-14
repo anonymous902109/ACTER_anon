@@ -1,20 +1,19 @@
 {
-
     "horizon": 10,
     "xl": 0,
     "xu": 10,
     "n_gen": 10,
-    "pop_size": 100,
+    "pop_size": 500,
     "expl_budget": 10,
     "div_budget": 3,
     "diversity_budget_list": [1],
     "n_sim": 10,
     "experience_path": "../datasets/farm0/experience.pkl",
     "task_name": "farm0",
-    "ts_n_iter": 100,
-    "ts_n_expand": 20,
-    "max_actions": 20,
-    "max_level": 20,
+    "ts_n_iter": 500,
+    "ts_n_expand": 5,
+    "max_actions": 5,
+    "max_level": 5,
     "c": 0.7
 }
 

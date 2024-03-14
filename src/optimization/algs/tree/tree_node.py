@@ -1,7 +1,8 @@
 class TreeNode:
 
-    def __init__(self, state, parent, action, rew, env, bb_model, obj, fact, valid=None):
+    def __init__(self, state, env_state, parent, action, rew, env, bb_model, obj, fact, valid=None):
         self.state = state
+        self.env_state = env_state
         self.parent = parent
         self.env = env
         self.bb_model = bb_model
@@ -43,7 +44,7 @@ class TreeNode:
 
         for i in range(s):
             self.env.reset()
-            self.env.set_stochastic_state(self.state, self.fact.env_states[-1])
+            self.env.set_nonstoch_state(self.state, self.env_state)
 
             obs, rew, done, trunc, _ = self.env.step(action)
 
@@ -54,7 +55,7 @@ class TreeNode:
                     break
 
             if not found:
-                nn = TreeNode(obs, self, action, rew, self.env, self.bb_model, self.obj, self.fact)
+                nn = TreeNode(obs, self.env.get_env_state(), self, action, rew, self.env, self.bb_model, self.obj, self.fact)
                 nns.append(nn)
                 rewards.append(rew)
 
