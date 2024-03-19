@@ -8,7 +8,7 @@
     "div_budget": 3,
     "diversity_budget_list": [1,3,5],
     "n_sim": 10,
-    "ts_n_iter": 300,
+    "ts_n_iter": 10,
     "ts_n_expand": 20,
     "max_actions": 20,
     "max_level": 20,

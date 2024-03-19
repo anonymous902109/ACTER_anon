@@ -1,3 +1,6 @@
+import copy
+
+
 class TreeNode:
 
     def __init__(self, state, env_state, parent, action, rew, env, bb_model, obj, fact, valid=None):
@@ -44,7 +47,7 @@ class TreeNode:
 
         for i in range(s):
             self.env.reset()
-            self.env.set_nonstoch_state(self.state, self.env_state)
+            self.env.set_nonstoch_state(self.state, copy.deepcopy(self.env_state))
 
             obs, rew, done, trunc, _ = self.env.step(action)
 
@@ -55,7 +58,7 @@ class TreeNode:
                     break
 
             if not found:
-                nn = TreeNode(obs, self.env.get_env_state(), self, action, rew, self.env, self.bb_model, self.obj, self.fact)
+                nn = TreeNode(obs, copy.deepcopy(self.env.get_env_state()), self, action, rew, self.env, self.bb_model, self.obj, self.fact)
                 nns.append(nn)
                 rewards.append(rew)
 

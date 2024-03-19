@@ -56,7 +56,7 @@ def main(task_name):
     failure_outcome = FailureOutcome(bb_model)
     one_action_outcomes = [OneActionOutcome(bb_model, target_action=a) for a in range(env.action_space.n)] # TODO: make action list param in the env
 
-    # outcomes = [failure_outcome] + one_action_outcomes
+    outcomes = [failure_outcome] + one_action_outcomes
     outcomes = one_action_outcomes[0:1]
 
     # generate facts
@@ -70,8 +70,8 @@ def main(task_name):
     acter_discrete = BackGenDiscrete(env, bb_model, params)
     fid_raccer = FidRACCER(env, bb_model, params)
 
-    methods = [fid_raccer]
-    method_names = ['RACCER']
+    methods = [fid_raccer, acter, acter_discrete]
+    method_names = ['RACCER', 'ACTER', 'ACTER_discrete']
 
     for i, f in enumerate(facts):
         generate_counterfactuals(methods, method_names, f, outcomes[i], env, eval_path, params)

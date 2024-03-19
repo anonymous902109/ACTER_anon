@@ -1,3 +1,5 @@
+import copy
+
 import numpy as np
 import math
 
@@ -19,7 +21,7 @@ class HeuristicTSAlgorithm:
         self.tree_size = 0
 
     def search(self, init_state, fact):
-        self.root = TreeNode(init_state, fact.env_states[-1], None, None, 0, self.env, self.bb_model, self.obj, fact, valid=False)
+        self.root = TreeNode(init_state, copy.deepcopy(fact.env_states[-1]), None, None, 0, self.env, self.bb_model, self.obj, fact, valid=False)
         self.cfs = []
 
         i = 0
