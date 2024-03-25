@@ -1,5 +1,6 @@
 import copy
 import inspect
+import math
 
 import gymnasium as gym
 import highway_env
@@ -12,12 +13,14 @@ class HighwayEnv(AbstractEnv):
     def __init__(self):
         ''' Wrapper for the highway gym environment containing additional methods need for running counterfactual methods '''
 
+        self.vehicle_count = 15
+
         # define gym environment
         self.gym_env = gym.make("highway-fast-v0", render_mode="rgb_array")
         config = {
             "observation": {
                 "type": "Kinematics",
-                "vehicles_count": 15,
+                "vehicles_count": self.vehicle_count,
                 "features": ["presence", "x", "y", "vx", "vy", "heading", "cos_h", "sin_h"],
                 "features_range": {
                     "x": [-100, 100],
@@ -42,14 +45,21 @@ class HighwayEnv(AbstractEnv):
 
         self.render_mode = 'rgb_array'
 
+        self.alpha = 0.05
+
     def step(self, action):
         ''' Runs a step() action in the environment compatible with Gym framework'''
         obs, rew, done, trunc, info = self.gym_env.step(action)
 
         # define failure (in highway it's the collision with another vehicle)
-        self.failure = info['rewards']['collision_reward'] > 0
-
+        # self.failure = info['rewards']['collision_reward'] > 0
         self.state = np.array(obs)
+
+        self.failure = (self.dist_to_closest_car(self.state) < self.alpha)
+
+        print(self.dist_to_closest_car(self.state))
+        if info['rewards']['collision_reward'] > 0:
+            print('CRASH')
 
         return self.state, rew, done, trunc, info
 
@@ -103,6 +113,19 @@ class HighwayEnv(AbstractEnv):
     def writable_state(self, x):
         """ Returns a string with all state information to be used for writing results"""
         pass
+
+    def dist_to_closest_car(self, state):
+        ego_coordinates = state[0][1:3]
+        car_coordinates = [state[i][1:3] for i in range(1, self.vehicle_count) if state[i][0] == 1]
+
+        min_dist = 1000
+        for cc in car_coordinates:
+
+            dist = math.sqrt(cc[0]**2 + cc[1]**2)
+            if dist < min_dist:
+                min_dist = dist
+
+        return min_dist
 
     def check_failure(self):
         ''' Returns a boolean indicating if a failure occured in the environment'''

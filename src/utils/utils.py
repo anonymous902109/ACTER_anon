@@ -68,7 +68,7 @@ def load_facts_from_json(fact_file):
     return facts, targets
 
 
-def generate_paths_with_outcome(outcome, csv_path, env, bb_model, n_ep=1000, horizon=5):
+def generate_paths_with_outcome(outcome, csv_path, env, bb_model, n_ep=10, horizon=5):
     ''' Generates a dataset of Trajectory objects where a failure happens
     :param csv_path: path to save the dataset
     :param env: gym gym_env

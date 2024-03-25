@@ -38,6 +38,7 @@ class HeuristicTSAlgorithm:
                     c.rewards = c.get_reward_dict()
 
                     if c.valid_outcome:
+                        c.rewards['validity'] = 1
                         self.cfs.append((c.prev_actions, c.state, c.rewards, c.rank_value))
 
                 if len(new_nodes):

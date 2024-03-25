@@ -19,7 +19,7 @@ def main(task_name):
     # define paths
     param_file = '../params/{}.json'.format(task_name)
     model_path = '../trained_models/{}'.format(task_name)
-    failure_traj_path = '../datasets/{}/failures'.format(task_name)
+    failure_traj_path = '../datasets/{}/failure'.format(task_name)
     one_step_traj_path = '../datasets/{}/fail_success_pairs.pkl'.format(task_name)
     eval_path = f'../eval/{task_name}/'
     user_study_train_path = '../eval/{}/user_study_train/'.format(task_name)

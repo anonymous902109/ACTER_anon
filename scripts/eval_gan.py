@@ -16,7 +16,7 @@ def main(task_name):
 
     # define paths
     model_path = '../trained_models/{}'.format(task_name)
-    failure_traj_path = '../datasets/{}/failures'.format(task_name)
+    failure_traj_path = '../datasets/{}/failure'.format(task_name)
     param_file = '../params/{}.json'.format(task_name)
 
     with open(param_file, 'r') as f:

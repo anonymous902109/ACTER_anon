@@ -3,7 +3,10 @@ import os
 
 from src.approaches.backward_cfs.backward_generator import BackGen
 from src.approaches.backward_cfs.backwards_generator_discrete import BackGenDiscrete
+from src.approaches.explaining.cf_expl import CFExpl
+from src.approaches.explaining.pf_expl import PFExpl
 from src.approaches.raccer.fid_raccer import FidRACCER
+from src.approaches.raccer.nsga_raccer import NSGARaccer
 from src.envs.bike_sharing import BikeSharing
 from src.envs.farm0 import Farm0
 from src.envs.frozen_lake import FrozenLake
@@ -54,10 +57,9 @@ def main(task_name):
 
     # define target outcomes
     failure_outcome = FailureOutcome(bb_model)
-    one_action_outcomes = [OneActionOutcome(bb_model, target_action=a) for a in range(env.action_space.n)] # TODO: make action list param in the env
+    one_action_outcomes = [OneActionOutcome(bb_model, target_action=a) for a in range(env.action_space.n)]
 
-    outcomes = [failure_outcome] + one_action_outcomes
-    outcomes = one_action_outcomes[0:1]
+    outcomes = one_action_outcomes
 
     # generate facts
     facts = []
@@ -65,20 +67,19 @@ def main(task_name):
         f = generate_paths_with_outcome(o, os.path.join(outcome_traj_path, o.name), env, bb_model, horizon=params['horizon'])
         facts.append(f[0:10])
 
-    # define algorithms
-    acter = BackGen(env, bb_model, params)
-    acter_discrete = BackGenDiscrete(env, bb_model, params)
-    fid_raccer = FidRACCER(env, bb_model, params)
+    # define algorithms for explaining
+    pf = PFExpl(env, bb_model, params)
+    cf = CFExpl(env, bb_model, params)
 
-    methods = [fid_raccer, acter, acter_discrete]
-    method_names = ['RACCER', 'ACTER', 'ACTER_discrete']
+    methods = [pf, cf]
+    method_names = ['Pf_expl', 'Cf_expl']
 
     for i, f in enumerate(facts):
         generate_counterfactuals(methods, method_names, f, outcomes[i], env, eval_path, params)
 
 
 if __name__ == '__main__':
-    tasks = ['farm0', 'highway']
+    tasks = ['gridworld']
 
     for t in tasks:
         main(t)

@@ -202,7 +202,7 @@ class Gridworld(AbstractEnv):
         self.random_generator = np.random.default_rng(seed=seed)
         self.failure = False
 
-        monster = self.random_generator.integers(0, self.world_dim * self.world_dim - 1, size=1)
+        monster = self.random_generator.integers(0, self.world_dim * self.world_dim - 1)
         agent = self.random_generator.integers(0, self.world_dim * self.world_dim - 1)
 
         while agent % 5 > 1:

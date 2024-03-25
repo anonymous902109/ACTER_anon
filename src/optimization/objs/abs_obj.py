@@ -68,6 +68,9 @@ class AbstractObj():
         self.lmbdas.update(w)
 
     def reachability(self, actions):
+        last_action = actions.index(self.noop)
+        actions = actions[0:last_action]  # Allow for noop actions
+
         if len(actions) == 0:
             return 1
 

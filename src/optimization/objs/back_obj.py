@@ -20,7 +20,6 @@ class BackObj(AbstractObj):
         self.objectives = ['uncertainty', 'proximity', 'sparsity', 'recency']
         self.constraints = ['validity']
 
-        self.n_sim = params['n_sim']
 
     def get_objectives(self, fact, cf, actions, target_action):
         proximity = self.action_proximity(fact, actions)
