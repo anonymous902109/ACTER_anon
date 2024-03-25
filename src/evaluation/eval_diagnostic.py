@@ -17,10 +17,14 @@ def generate_counterfactuals(methods, method_names, facts, outcome, env, eval_pa
         print('Method = {}'.format(method_names[i_m]))
         for i, t in tqdm(enumerate(facts)):
             res = m.generate_counterfactuals(t)
+
+            first_state = m.obj.get_first_state(t)
+
             for cf in res:
+                end_state = m.obj.calculate_end_state(*first_state, cf.recourse)
                 record.append([i,
-                               list(t.states[0]),
-                               list(t.end_state),
+                               env.writable_state(first_state[0]),
+                               env.writable_state(end_state),
                                list(t.actions),
                                list(cf.recourse),
                                *list(cf.reward_dict.values()),

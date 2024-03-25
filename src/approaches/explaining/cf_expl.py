@@ -10,8 +10,6 @@ class CFExpl(AbstractBaseline):
         self.obj = CfExplObj(env, bb_model, params)
         self.optim = EvolutionSearchMOO(env, bb_model, self.obj, params)
 
-        self.objectives = ['fidelity', 'proximity', 'sparsity', 'stochastic_validity']
-
         super(CFExpl, self).__init__()
 
     def generate_counterfactuals(self, fact, target=None):

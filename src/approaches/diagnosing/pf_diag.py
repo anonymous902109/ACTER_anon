@@ -1,18 +1,14 @@
 from src.approaches.abs_baseline import AbstractBaseline
 from src.models.counterfactual import CF
-from src.optimization.objs.explaining.pf_expl_obj import PfExplObj
-from src.optimization.objs.fid_obj import FidObj
+from src.optimization.objs.diagnosing.pf_diag_obj import PfDiagObj
 from src.optimization.search.evolutionary.evolution_search_MO import EvolutionSearchMOO
-from src.optimization.search.tree.heuristic_tree_search import HeuristicTreeSearch
 
-
-import numpy as np
 
 
 class PFExpl(AbstractBaseline):
 
     def __init__(self, env, bb_model, params):
-        self.obj = PfExplObj(env, bb_model, params)
+        self.obj = PfDiagObj(env, bb_model, params)
         self.optim = EvolutionSearchMOO(env, bb_model, self.obj, params)
 
         super(PFExpl, self).__init__()

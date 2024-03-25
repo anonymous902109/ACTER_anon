@@ -10,7 +10,7 @@ class CustomDataset:
         self.bb_model = bb_model
         self.dataset_path = dataset_path
 
-        self._dataset = self.generate_dataset(env, bb_model, dataset_path, n_ep=10, k=k)
+        self._dataset = self.generate_dataset(env, bb_model, dataset_path, n_ep=10000, k=k)
 
     def generate_dataset(self, env, model, dataset_path, n_ep=10000, k=10):
         try:

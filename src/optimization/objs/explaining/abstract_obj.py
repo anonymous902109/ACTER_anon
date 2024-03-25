@@ -42,10 +42,18 @@ class AbstractObjective:
         first_state = self.get_first_state(fact)
         self.env.set_stochastic_state(*first_state)
 
+        early_break = False
+        if len(actions) == 0:
+            return 1
+
         for a in actions:
             obs, _, done, trunc, _ = self.env.step(a)
             if done or trunc or self.env.check_failure():
+                early_break = True
                 break
+
+        if early_break:
+            return 1
 
         valid_outcome = fact.outcome.cf_outcome(self.env, obs)
         # IMPORTANT: return 1 if the class hasn't changed -- to be compatible with minimization used by NSGA
@@ -68,15 +76,11 @@ class AbstractObjective:
         return recency
 
     def reachability(self, actions):
-        if -1 in actions:
-            last_action = actions.index(self.noop)
-            actions = actions[0:last_action]  # Allow for noop actions
 
         if len(actions) == 0:
             return 1
 
         return len(actions) * 1.0 / self.max_actions
-
 
     def stoch_validity(self, fact, actions):
         n_sim = self.n_sim
@@ -86,6 +90,9 @@ class AbstractObjective:
             self.env.reset(seed=randomseed)
             first_state = self.get_first_state(fact)
             self.env.set_nonstoch_state(*first_state)
+
+            if len(actions) == 0:
+                break
 
             for a in actions:
                 obs, rew, done, trunc, _ = self.env.step(a)
@@ -183,4 +190,13 @@ class AbstractObjective:
         else:
             fidelity = 1
 
-        return fidelity # TODO: limit fidelity
+        # IMPORTANT -- returning False when fidelity is satisfied to be compatible with NSGA-II minimizing objective
+        return fidelity < 0.8
+
+    def calculate_end_state(self, state, env_state, actions):
+        self.env.reset()
+        self.env.set_stochastic_state(copy.deepcopy(state), copy.deepcopy(env_state))
+        for a in actions:
+            obs, _, done, trunc, _ = self.env.step(a)
+
+        return obs

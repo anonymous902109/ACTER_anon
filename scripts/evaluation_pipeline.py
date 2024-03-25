@@ -39,7 +39,7 @@ def main(task_name):
         training_timesteps = int(1e5)
     elif task_name == 'gridworld':
         env = Gridworld()
-        training_timesteps = int(1e4)
+        training_timesteps = int(2e5)
     elif task_name == 'frozen_lake':
         env = FrozenLake()
         training_timesteps = int(3e5)
@@ -59,7 +59,7 @@ def main(task_name):
     failure_outcome = FailureOutcome(bb_model)
     one_action_outcomes = [OneActionOutcome(bb_model, target_action=a) for a in range(env.action_space.n)]
 
-    outcomes = one_action_outcomes
+    outcomes = [one_action_outcomes[-1]]
 
     # generate facts
     facts = []

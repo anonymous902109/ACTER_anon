@@ -57,7 +57,9 @@ class EvolutionaryAlg:
             return res
 
         for i, cf in enumerate(cfs.X):
-            res.append((cf, sum(cfs.F[i]), cf_problem.rew_dict[tuple(cf)]))
+            if allow_noop:
+                cf_reduced = [a for a in cf if a != self.obj.noop]
+            res.append((cf_reduced, sum(cfs.F[i]), cf_problem.rew_dict[tuple(cf)]))
 
         return res
 

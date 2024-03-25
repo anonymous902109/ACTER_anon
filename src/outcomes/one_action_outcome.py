@@ -12,7 +12,8 @@ class OneActionOutcome(AbstractOutcome):
         return self.target_action == self.bb_model.predict(state)  # counterfactual where one specific action is required
 
     def explain_outcome(self, env, state=None):
-        if self.bb_model.predict(state) != self.target_action:  # TODO: reformat true action to something more meaningful
+
+        if self.bb_model.predict(state) != self.target_action:   # TODO: reformat true action to something more meaningful
             return True
 
         return False

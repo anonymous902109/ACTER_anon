@@ -13,8 +13,8 @@ class CfExplObj(AbstractObjective):
         super(CfExplObj, self).__init__(env, bb_model, params)
         self.bb_model = bb_model
         self.env = env
-        self.objectives = ['uncertainty', 'proximity', 'sparsity']
-        self.constraints = ['validity', 'fidelity']
+        self.objectives = ['uncertainty', 'proximity', 'sparsity', 'recency']
+        self.constraints = ['validity']
 
         self.n_sim = params['n_sim']
 
