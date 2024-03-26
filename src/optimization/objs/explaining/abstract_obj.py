@@ -1,5 +1,6 @@
 import copy
 import math
+import random
 from datetime import datetime
 
 import numpy as np
@@ -84,26 +85,28 @@ class AbstractObjective:
 
     def stoch_validity(self, fact, actions):
         n_sim = self.n_sim
-        cnt = 0
+        cnt = 0.0
         for i in range(n_sim):
             randomseed = int(datetime.now().timestamp())
-            self.env.reset(seed=randomseed)
+            self.env.reset(randomseed)
             first_state = self.get_first_state(fact)
             self.env.set_nonstoch_state(*first_state)
 
             if len(actions) == 0:
                 break
 
+            early_break = False
             for a in actions:
                 obs, rew, done, trunc, _ = self.env.step(a)
                 if done or trunc or self.env.check_failure():
+                    early_break = True
                     break
 
-            valid_outcome = fact.outcome.cf_outcome(self.env, obs)
-            if valid_outcome:
+            valid_outcome = fact.outcome.cf_outcome(self.env, copy.deepcopy(obs))
+            if valid_outcome and (not early_break):
                 cnt += 1
 
-        return 1 - ((cnt * 1.0)/n_sim)
+        return 1 - (cnt/n_sim)
 
     def combine(self, states, actions):
         ''' Combines a list of states and actions into format (s1, ..., sn, a1, ... , an) '''
@@ -160,10 +163,10 @@ class AbstractObjective:
 
             obs = fact.end_state
 
-            fid = 0.0
+            fid = 1.0
 
             if len(actions) == 0:
-                return 1, 1, 1, 1
+                return 1
 
             done = False
             early_break = False
@@ -175,7 +178,7 @@ class AbstractObjective:
                     break
 
                 prob = bb_model.get_action_prob(obs, a)
-                fid += prob
+                fid *= prob
 
                 obs, rew, done, trunc, _ = self.env.step(a)
                 ep_rew += rew
@@ -183,15 +186,15 @@ class AbstractObjective:
                 available_actions = self.env.get_actions(obs)
 
             if not early_break:
-                fidelities.append(1 - fid / len(actions))
+                fidelities.append(fid)
 
         if len(fidelities):
             fidelity = sum(fidelities) / (len(fidelities) * 1.0)
         else:
-            fidelity = 1
+            fidelity = 0
 
         # IMPORTANT -- returning False when fidelity is satisfied to be compatible with NSGA-II minimizing objective
-        return fidelity < 0.8
+        return fidelity < 0.1
 
     def calculate_end_state(self, state, env_state, actions):
         self.env.reset()

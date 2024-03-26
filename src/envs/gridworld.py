@@ -50,6 +50,8 @@ class Gridworld(AbstractEnv):
         self.state = new_state
         self.steps += 1
 
+        self.is_done = done
+
         return new_state.flatten(), rew, done, done, {}
 
     def create_state(self, agent, monster, trees, chopping, chopped_trees=[], killed_monster=False):
@@ -199,8 +201,9 @@ class Gridworld(AbstractEnv):
         return True
 
     def reset(self, seed=0):
-        self.random_generator = np.random.default_rng(seed=seed)
+        self.random_generator = np.random.default_rng(seed=int(datetime.now().timestamp()))
         self.failure = False
+        self.is_done = False
 
         monster = self.random_generator.integers(0, self.world_dim * self.world_dim - 1)
         agent = self.random_generator.integers(0, self.world_dim * self.world_dim - 1)
@@ -360,4 +363,4 @@ class Gridworld(AbstractEnv):
 
     def set_nonstoch_state(self, state, env_state):
         self.set_stochastic_state(state, env_state)
-        self.random_generator = np.random.default_rng(seed=int(datetime.now().timestamp()))  # reset random generator
+        self.random_generator = np.random.default_rng(seed=int(datetime.now().timestamp() * 10e5))  # reset random generator

@@ -27,7 +27,8 @@ def main(task_name):
     # define paths
     model_path = '../trained_models/{}/{}'.format(task_name, task_name)
     param_file = '../params/{}.json'.format(task_name)
-    outcome_traj_path = '../datasets/{}/facts/'.format(task_name)
+    fact_forward_path = '../datasets/{}/facts/forward/'.format(task_name)
+    fact_backward_path = '../datasets/{}/facts/backward/'.format(task_name)
     eval_path = f'../eval/{task_name}/'
 
     # define environment
@@ -39,7 +40,7 @@ def main(task_name):
         training_timesteps = int(1e5)
     elif task_name == 'gridworld':
         env = Gridworld()
-        training_timesteps = int(2e5)
+        training_timesteps = int(3e5)
     elif task_name == 'frozen_lake':
         env = FrozenLake()
         training_timesteps = int(3e5)
@@ -62,20 +63,32 @@ def main(task_name):
     outcomes = [one_action_outcomes[-1]]
 
     # generate facts
-    facts = []
+    facts_forward = []
+    facts_backward = []
     for o in outcomes:
-        f = generate_paths_with_outcome(o, os.path.join(outcome_traj_path, o.name), env, bb_model, horizon=params['horizon'])
-        facts.append(f[0:10])
+        path_forward = os.path.join(fact_forward_path, o.name)
+        path_backward = os.path.join(fact_backward_path, o.name)
+        ff = generate_paths_with_outcome(o, path_forward, env, bb_model, horizon=params['horizon'], traj_type='forward')
+        fb = generate_paths_with_outcome(o, path_backward, env, bb_model, horizon=params['horizon'], traj_type='backward')
+        facts_forward.append(ff[1:])
+        facts_backward.append(fb)
 
     # define algorithms for explaining
     pf = PFExpl(env, bb_model, params)
     cf = CFExpl(env, bb_model, params)
 
-    methods = [pf, cf]
-    method_names = ['Pf_expl', 'Cf_expl']
+    forward_algs = [pf]
+    forward_algs_names = ['Pf_expl']
+    backward_algs = [cf]
+    backward_alg_names = ['Cf_expl']
 
-    for i, f in enumerate(facts):
-        generate_counterfactuals(methods, method_names, f, outcomes[i], env, eval_path, params)
+    # generate cfs for looking forward
+    for i, f in enumerate(facts_forward):
+        generate_counterfactuals(forward_algs, forward_algs_names, f, outcomes[i], env, eval_path, params)
+
+    # generate cfs for looking backward
+    for i, f in enumerate(facts_backward):
+        generate_counterfactuals(backward_algs, backward_alg_names, f, outcomes[i], env, eval_path, params)
 
 
 if __name__ == '__main__':

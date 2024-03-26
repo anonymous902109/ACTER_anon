@@ -19,13 +19,10 @@ class PfExplObj(AbstractObjective):
         self.n_sim = params['n_sim']
 
     def get_constraints(self, fact, cf, actions, target_action):
-        actions = [2, -1, -1, -1, -1]
         actions = [a for a in actions if a != self.noop]  # remove Noop actions
-
+        actions = [3]
         validity = self.validity(fact, actions)
         fidelity = self.fidelity(fact, actions, self.bb_model)
-        fidelity = False
-        # print('Actions = {} Validity = {} Fidelity = {}'.format(actions, validity, fidelity))
 
         return {'validity': validity,
                 'fidelity': fidelity}
@@ -40,7 +37,7 @@ class PfExplObj(AbstractObjective):
                 'reachability': reachability}
 
     def get_first_state(self, fact):
-        return copy.copy(fact.states[-1]), copy.deepcopy(fact.env_states[-1])
+        return copy.deepcopy(fact.states[-1]), copy.deepcopy(fact.env_states[-1])
 
 
 

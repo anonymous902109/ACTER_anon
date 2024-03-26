@@ -56,10 +56,13 @@ class EvolutionaryAlg:
         if cfs.X is None:
             return res
 
+        processed = []
         for i, cf in enumerate(cfs.X):
-            if allow_noop:
-                cf_reduced = [a for a in cf if a != self.obj.noop]
-            res.append((cf_reduced, sum(cfs.F[i]), cf_problem.rew_dict[tuple(cf)]))
+            cf_reduced = [a for a in cf if a != self.obj.noop]
+
+            if cf_reduced not in processed:
+                res.append((cf_reduced, sum(cfs.F[i]), cf_problem.rew_dict[tuple(cf)]))
+                processed.append(cf_reduced)
 
         return res
 

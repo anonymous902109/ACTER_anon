@@ -45,7 +45,6 @@ class DQNModel:
     def predict(self, x):
         ''' Predicts a deterministic action in state x '''
         action, _ = self.model.predict(x, deterministic=True)
-
         return action.item()
 
     def get_action_prob(self, x, a):

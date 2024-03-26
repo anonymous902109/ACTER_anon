@@ -31,8 +31,8 @@ def generate_counterfactuals(methods, method_names, facts, outcome, env, eval_pa
                                cf.value])
 
             columns = ['Fact id',
-                       'Fact start state',
-                       'Fact end state',
+                       'Fact state',
+                       'Counterfactual state',
                        'Fact actions',
                        'Recourse'] + m.obj.objectives + m.obj.constraints + ['Value']
             df = pd.DataFrame(record, columns=columns)
