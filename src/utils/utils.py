@@ -68,7 +68,7 @@ def load_facts_from_json(fact_file):
     return facts, targets
 
 
-def generate_paths_with_outcome(outcome, csv_path, env, bb_model, n_ep=1000, horizon=5, traj_type='forward'):
+def generate_paths_with_outcome(outcome, csv_path, env, bb_model, n_ep=10000, horizon=5, traj_type='forward'):
     ''' Generates a dataset of Trajectory objects where a failure happens
     :param csv_path: path to save the dataset
     :param env: gym gym_env
@@ -99,14 +99,14 @@ def generate_paths_with_outcome(outcome, csv_path, env, bb_model, n_ep=1000, hor
                 new_obs, rew, done, trunc, info = env.step(action)
                 done = done or trunc
 
-                if (outcome.explain_outcome(env, new_obs)): # if outcome should be explained
+                if (outcome.explain_outcome(env, new_obs)):  # if outcome should be explained
                     if ((len(p) - 1) >= horizon) or (traj_type == 'forward'):  # either long back trajectory or we're looking forward so it does not matter
                         p.append((copy.copy(new_obs), None, None, None, copy.deepcopy(env.get_env_state())))
                         for t in p[-(horizon+1):]:
                             buffer.append(*t)
 
                         buffer.stop_current_episode()
-                    # done = True
+                        done = True # stop current episode when it's written into facts
 
                 obs = new_obs
 

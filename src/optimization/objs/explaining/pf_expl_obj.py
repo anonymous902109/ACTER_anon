@@ -20,7 +20,7 @@ class PfExplObj(AbstractObjective):
 
     def get_constraints(self, fact, cf, actions, target_action):
         actions = [a for a in actions if a != self.noop]  # remove Noop actions
-        actions = [3]
+
         validity = self.validity(fact, actions)
         fidelity = self.fidelity(fact, actions, self.bb_model)
 

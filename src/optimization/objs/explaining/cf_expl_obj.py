@@ -14,25 +14,29 @@ class CfExplObj(AbstractObjective):
         self.bb_model = bb_model
         self.env = env
         self.objectives = ['uncertainty', 'proximity', 'sparsity', 'recency']
-        self.constraints = ['validity']
+        self.constraints = ['validity', 'fidelity']
 
         self.n_sim = params['n_sim']
 
     def get_constraints(self, fact, cf, actions, target_action):
         validity = self.validity(fact, actions)
         fidelity = self.fidelity(fact, actions, self.bb_model)
+        fidelity = False
 
         return {'validity': validity,
                 'fidelity': fidelity}
 
     def get_objectives(self, fact, cf, actions, target_action):
+
         proximity = self.action_proximity(fact, actions)
         sparsity = self.sparsity(fact, actions)
         stochasticity = self.stoch_validity(fact, actions)
+        recency = self.recency(fact, actions)
 
         return {'uncertainty': stochasticity,
                 'proximity': proximity,
-                'sparsity': sparsity}
+                'sparsity': sparsity,
+                'recency': recency}
 
     def get_first_state(self, fact):
         return copy.copy(fact.states[0]), copy.deepcopy(fact.env_states[0])

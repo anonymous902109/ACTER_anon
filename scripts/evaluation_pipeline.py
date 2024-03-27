@@ -70,7 +70,7 @@ def main(task_name):
         path_backward = os.path.join(fact_backward_path, o.name)
         ff = generate_paths_with_outcome(o, path_forward, env, bb_model, horizon=params['horizon'], traj_type='forward')
         fb = generate_paths_with_outcome(o, path_backward, env, bb_model, horizon=params['horizon'], traj_type='backward')
-        facts_forward.append(ff[1:])
+        facts_forward.append(ff)
         facts_backward.append(fb)
 
     # define algorithms for explaining
@@ -83,8 +83,8 @@ def main(task_name):
     backward_alg_names = ['Cf_expl']
 
     # generate cfs for looking forward
-    for i, f in enumerate(facts_forward):
-        generate_counterfactuals(forward_algs, forward_algs_names, f, outcomes[i], env, eval_path, params)
+    # for i, f in enumerate(facts_forward):
+    #     generate_counterfactuals(forward_algs, forward_algs_names, f, outcomes[i], env, eval_path, params)
 
     # generate cfs for looking backward
     for i, f in enumerate(facts_backward):

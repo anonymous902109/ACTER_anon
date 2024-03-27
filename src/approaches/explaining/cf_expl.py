@@ -16,7 +16,7 @@ class CFExpl(AbstractBaseline):
         return self.get_best_cf(fact, target)
 
     def get_best_cf(self, fact, target=None):
-        res = self.optim.alg.search(init_state=fact, fact=fact, target_action=target)
+        res = self.optim.alg.search(init_state=fact, fact=fact, target_action=target, allow_noop=False)
 
         cfs = []
 

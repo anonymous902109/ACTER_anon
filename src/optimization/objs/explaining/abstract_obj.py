@@ -112,7 +112,7 @@ class AbstractObjective:
         ''' Combines a list of states and actions into format (s1, ..., sn, a1, ... , an) '''
         comb = []
         for s in states:
-            # all all states first
+            # all states first
             comb.extend(list(s.flatten()))
 
         for a in actions:
