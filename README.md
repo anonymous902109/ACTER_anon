@@ -1,6 +1,7 @@
 # ACTER: Generating Actionable Counterfactual Sequences
 
-Code for paper ACTER: Diverse and Actionable Counterfactual Sequences for Explaining and Diagnosing RL Policies
+Code for ACTER algorithm for generating user-friendly counterfactual sequences for personalized recourse
+
 
 ## Instalation
 
@@ -12,7 +13,6 @@ pip install -r requirements.txt
 
 ## Running Experiments  
 
-At the moment, experiments can be run with simulated users.
 
 ```shell
 python scripts/main_diagnosing.py
